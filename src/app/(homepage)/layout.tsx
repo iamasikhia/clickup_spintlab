@@ -8,7 +8,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <SidebarProvider>
       <AppSidebar />
       <div className="flex flex-1 flex-col">
-        <Header />
+        <Header page="Dashboard" username="test-user123" />
         <Separator className="mb-8" />
         <main>{children}</main>
       </div>
