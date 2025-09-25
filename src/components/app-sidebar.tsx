@@ -6,7 +6,6 @@ import {
   LucideSend,
   LucideSettings,
   LucideUser,
-  Settings,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import {
@@ -14,7 +13,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
