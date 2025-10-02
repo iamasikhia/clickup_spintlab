@@ -7,7 +7,6 @@ import {
 import { BigCard } from "@/components/big-card";
 import { Heading } from "@/components/heading";
 import { SmallCard } from "@/components/small-card";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Dashboard = () => {
   return (
