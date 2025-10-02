@@ -1,17 +1,51 @@
 from fastapi import FastAPI
 from app.model import PostSchema
+from fastapi.middleware.cors import CORSMiddleware
+# import fastapi, post-making library, and middleware
 
+#initialize app instance
 app = FastAPI()
 
-# get route
-
+# get routes
 posts = [
     {
         "id": 1,
         "title": "Sample Post Title",
         "content": "This is a sample post content."
+    },
+
+    {
+        "id": 2,
+        "title": "Sample Post Title",
+        "content": "new new."
     }
 ]
+
+testing = [
+    {
+        "id": 1,
+        "title": "Sample Post Title",
+        "content": "hi"
+    }
+]
+
+# middleware
+origins = [
+    "http://localhost",
+]
+
+#add middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = origins,
+    allow_credentials = True,
+    allow_methods = ["*"],
+    allow_headers = ["*"]
+)
+
+# tldr allow_origins of the origins list we just initialized that allows the localhost to connect
+# necessary for frontend host to connect to different backend localhost website 
+
 
 users = []
 
