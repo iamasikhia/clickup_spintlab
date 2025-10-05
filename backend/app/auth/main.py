@@ -1,42 +1,34 @@
 from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from pwdlib import PasswordHash
 from pydantic import BaseModel
 from datetime import datetime, timedelta, timezone
 import jwt
-from jwt import InvalidTokenError
+from jwt.exceptions import InvalidTokenError
 
 # def - regular, "synchronous" function that executes sequentially
 # async def - "asynchronous coroutine" function, designed for concurrency
 
-# fake database of users - username must be the same as the key
-fake_users = {
-    "bruh" : {
-        "username" : "bruh",
-        "email" : "bruh@example.com",
-        "full_name" : "Bruh Doe",
-        "hashed_password" : "fakehashedsecret",
-        "disabled" : False,
-    },
-
-    "paul_ise" : {
-        "username" : "paul_ise",
-        "email" : "paul_ise@example.com",
-        "full_name" : "Paul Ise",
-        "hashed_password" : "fakehashedclickclick",
-        "disabled" : False,
-    }
-}
 
 # RANDOM secret_key, algorithm, and expiration time for JWT tokens; store in env variables soon
 # run openssl rand -hex 32 in terminal to generate a random secret key
-SECRET_KEY = "e4808addfa4f78df6385bdd9a93073dc6399158a5ea2f46d9992dc93485094cd"
+# SECRET_KEY = ""
+SECRET_KEY = ""
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-def fake_hash_password(password: str):
-    return "fakehashed" + password
+
+fake_users = {
+    "paul_ise": {
+        "username": "paul_ise",
+        "full_name": "Paul Ise",
+        "email": "paul_ise@example.com",
+        "hashed_password": "",
+        "disabled": False,
+    }
+}
 
 class User(BaseModel):
     username: str
@@ -136,27 +128,15 @@ async def get_current_active_user(current_user: Annotated[User, Depends(get_curr
 
 ##
 
-# can now get the current user directly in path operation function
-@app.get("/users/me", response_model = User)
-async def read_users_me(
-    current_user: Annotated[User, Depends(get_current_active_user)]):   
-    return current_user
-
-@app.get("/users/me/items/")
-async def read_own_items(current_user: Annotated[User, Depends(get_current_active_user)]):
-    return [{
-        "item_id" : "Foo",
-        "owner" : current_user.username
-    }]
-
 ## main login endpoint
 # operation for a user to send username/pw
 @app.post("/token")
 # define the login function with an instance of a OAuth2 pw request form
 # class dependency that declares a form body with a username and password
 # # ^ defines function param form_data and tells FastAPI how to process it
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
-    # make a user
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
+) -> Token:
     user = authenticate_user(fake_users, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -175,5 +155,22 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
 
     return Token(access_token = access_token, token_type = "bearer")
 
+# can now get the current user directly in path operation function
+@app.get("/users/me", response_model = User)
+async def read_users_me(
+    current_user: Annotated[User, Depends(get_current_active_user)]):   
+    return current_user
 
-    user_dict = fake_users.get(form_data.username)
+@app.get("/users/me/items/")
+async def read_own_items(
+    current_user: Annotated[User, Depends(get_current_active_user)]):
+    return [{
+        "item_id" : "Foo",
+        "owner" : current_user.username
+    }]
+
+
+plain_password_test = "bruhh"
+print(plain_password_test)
+hashed_pw_test = get_password_hash(plain_password_test)
+print(hashed_pw_test)
