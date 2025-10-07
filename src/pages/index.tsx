@@ -1,27 +1,27 @@
+import { useSession } from "next-auth/react";
+import type React from "react";
+import { useEffect } from "react";
+import Dashboard from "./dashboard";
 
+const HomePage: React.FC = () => {
+  const { data: session, status } = useSession();
 
-import { signOut, useSession } from "next-auth/react";
-import type * as React from "react";
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session) {
+      window.location.href = "/api/auth/signin";
+    }
+  }, [session, status]);
 
-export default function HomePage(): React.JSX.Element {
-  const { data: sessionTyped } = useSession();
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
 
-  if (!sessionTyped) return <p>Please log in</p>;
+  if (!session) {
+    return <div>Redirecting to sign in...</div>;
+  }
 
-  return (
-    <div style={{ maxWidth: "600px", margin: "50px auto" }}>
-      <h1>Welcome {sessionTyped.user?.email}!</h1>
-      <p>Your role: {sessionTyped.user?.role}</p>
+  return <Dashboard />;
+};
 
-      {sessionTyped.user?.role === "admin" && <div>🔑 Admin dashboard</div>}
-      {sessionTyped.user?.role === "freelancer" && (
-        <div>💼 Freelancer panel</div>
-      )}
-      {sessionTyped.user?.role === "client" && <div>📋 Client tools</div>}
-
-      <button type="button" onClick={() => signOut()}>
-        Logout
-      </button>
-    </div>
-  );
-}
+export default HomePage;
