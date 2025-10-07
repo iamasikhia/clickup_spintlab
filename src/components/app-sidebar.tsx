@@ -21,27 +21,27 @@ const AppSidebar = () => {
   const items = [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: LucideChartColumn,
     },
     {
       title: "Task Manager",
-      url: "#",
+      url: "/task-manager",
       icon: LucideSettings,
     },
     {
       title: "Time Tracker",
-      url: "#",
+      url: "/time-tracker",
       icon: LucideClock,
     },
     {
       title: "Invoice Generator",
-      url: "#",
+      url: "/invoice-generator",
       icon: LucideReceiptText,
     },
     {
       title: "Export and Share",
-      url: "#",
+      url: "/export",
       icon: LucideSend,
     },
   ];
