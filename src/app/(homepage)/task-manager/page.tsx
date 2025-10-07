@@ -16,7 +16,21 @@ const TaskManager = () => {
           Add Task
         </Button>
       </div>
-      <div className="mx-8">
+      <div className="mx-8 grid grid-cols-3 gap-x-8 gap-y-8">
+        <TaskCard
+          title="Task Card"
+          description="Description of the card"
+          status="active"
+          rate="75.00"
+          created="1/4/2014"
+        />
+        <TaskCard
+          title="Task Card"
+          description="Description of the card"
+          status="active"
+          rate="75.00"
+          created="1/4/2014"
+        />
         <TaskCard
           title="Task Card"
           description="Description of the card"

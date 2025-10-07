@@ -25,7 +25,7 @@ const TaskCard = ({
   created,
 }: TaskCardProps) => {
   return (
-    <Card className="max-w-[420px]">
+    <Card>
       <CardHeader className="flex justify-between items-center">
         <div>
           <CardTitle>{title}</CardTitle>
