@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pwdlib import PasswordHash
 from pydantic import BaseModel
 from datetime import datetime, timedelta, timezone
-import jwt
+import backend.main as main
 from jwt.exceptions import InvalidTokenError
 
 # def - regular, "synchronous" function that executes sequentially
@@ -89,7 +89,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
         expire = datetime.now(timezone.utc) + timedelta(minutes=15)
     
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
+    encoded_jwt = main.encode(to_encode, SECRET_KEY, algorithm = ALGORITHM)
     return encoded_jwt # here's our encoded jwt token!
 
 
@@ -103,7 +103,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     # trying to decode if the token actually IS valid
     try:
         # now we're decoding jwt tokens, not fake tokens
-        payload = jwt.decode(token, SECRET_KEY, algorithms = [ALGORITHM])
+        payload = main.decode(token, SECRET_KEY, algorithms = [ALGORITHM])
         username = payload.get("sub")
         
         if username is None:
@@ -155,6 +155,8 @@ async def login_for_access_token(
 
     return Token(access_token = access_token, token_type = "bearer")
 
+@app.post("/signup")
+
 # can now get the current user directly in path operation function
 @app.get("/users/me", response_model = User)
 async def read_users_me(
@@ -168,9 +170,3 @@ async def read_own_items(
         "item_id" : "Foo",
         "owner" : current_user.username
     }]
-
-
-plain_password_test = "bruhh"
-print(plain_password_test)
-hashed_pw_test = get_password_hash(plain_password_test)
-print(hashed_pw_test)
