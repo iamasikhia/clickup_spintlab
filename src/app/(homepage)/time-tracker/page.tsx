@@ -1,5 +1,14 @@
+import { Heading } from "@/components/heading";
+
 const TimeTracker = () => {
-  return <div>time tracker</div>;
+  return (
+    <div>
+      <Heading
+        title="Time Tracker"
+        description="Track time for your projects and manage time logs"
+      />
+    </div>
+  );
 };
 
 export default TimeTracker;
