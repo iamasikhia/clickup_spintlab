@@ -1,5 +1,6 @@
 import {
   LucideChartColumn,
+  LucideCheckCircle,
   LucideClock,
   LucideReceiptText,
   LucideSend,
@@ -38,6 +39,11 @@ const AppSidebar = () => {
       title: "Invoice Generator",
       url: "/invoice-generator",
       icon: LucideReceiptText,
+    },
+    {
+      title: "Invoice Approval",
+      url: "/invoice-approval",
+      icon: LucideCheckCircle,
     },
     {
       title: "Export and Share",
