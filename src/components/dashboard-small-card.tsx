@@ -7,7 +7,12 @@ export type SmallCardProps = {
   descriptor: string;
 };
 
-const SmallCard = ({ title, icon, value, descriptor }: SmallCardProps) => {
+const DashboardSmallCard = ({
+  title,
+  icon,
+  value,
+  descriptor,
+}: SmallCardProps) => {
   return (
     <Card>
       <CardHeader className="flex justify-between items-center">
@@ -24,4 +29,4 @@ const SmallCard = ({ title, icon, value, descriptor }: SmallCardProps) => {
   );
 };
 
-export { SmallCard };
+export { DashboardSmallCard };

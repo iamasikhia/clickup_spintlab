@@ -4,7 +4,7 @@ type BigCardProps = {
   title: string;
 };
 
-const BigCard = ({ title }: BigCardProps) => {
+const DashboardBigCard = ({ title }: BigCardProps) => {
   return (
     <Card className="col-span-2 row-span-2">
       <CardHeader>
@@ -14,4 +14,4 @@ const BigCard = ({ title }: BigCardProps) => {
   );
 };
 
-export { BigCard };
+export { DashboardBigCard };
