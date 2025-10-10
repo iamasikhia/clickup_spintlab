@@ -6,6 +6,16 @@ PUBLIC_KEY = "PUBLIC"
 # fix link
 bearer_transport = BearerTransport(tokenUrl = "auth/jwt/login")
 
+async def get_user_db()
+    
+async def get_user_manager()
+    
+fastapi_users = FastAPIUsers[User, uuid.UUID](
+
+)
+
+current_active_user = fastapi_users.current_user(active = True)
+
 def get_jwt_strategy() -> JWTStrategy:
     return JWTStrategy(
         secret = SECRET, 
