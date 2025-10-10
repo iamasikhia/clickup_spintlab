@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "./ui/card";
 
-type InvoiceCardProps = {
+type RecentInvoiceCardProps = {
   invoiceName: string;
   companyName: string;
   time: string;
@@ -16,14 +16,14 @@ type InvoiceCardProps = {
   status: string;
 };
 
-const InvoiceCard = ({
+const RecentInvoiceCard = ({
   invoiceName,
   companyName,
   time,
   createdDate,
   amount,
   status,
-}: InvoiceCardProps) => {
+}: RecentInvoiceCardProps) => {
   return (
     <Card className="flex flex-row justify-between items-center">
       <CardHeader>
@@ -43,4 +43,4 @@ const InvoiceCard = ({
   );
 };
 
-export { InvoiceCard };
+export { RecentInvoiceCard };

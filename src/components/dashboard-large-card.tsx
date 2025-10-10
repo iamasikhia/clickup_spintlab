@@ -1,10 +1,10 @@
 import { Card, CardHeader, CardTitle } from "./ui/card";
 
-type BigCardProps = {
+type DashboardBigCardProps = {
   title: string;
 };
 
-const DashboardBigCard = ({ title }: BigCardProps) => {
+const DashboardBigCard = ({ title }: DashboardBigCardProps) => {
   return (
     <Card className="col-span-2 row-span-2">
       <CardHeader>

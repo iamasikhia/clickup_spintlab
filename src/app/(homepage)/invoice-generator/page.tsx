@@ -1,6 +1,6 @@
 import { LucidePlus } from "lucide-react";
 import { Heading } from "@/components/heading";
-import { InvoiceCard } from "@/components/invoice-card";
+import { RecentInvoiceCard } from "@/components/recent-invoice-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -22,7 +22,7 @@ const InvoiceGenerator = () => {
           <CardTitle>Recent Invoices</CardTitle>
         </CardHeader>
         <CardContent>
-          <InvoiceCard
+          <RecentInvoiceCard
             invoiceName="#inv_001"
             companyName="Acme Corporation"
             time="10.5"

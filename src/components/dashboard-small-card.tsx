@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
-export type SmallCardProps = {
+export type DashboardSmallCardProps = {
   title: string;
   icon: React.ReactNode;
   value: string;
@@ -12,7 +12,7 @@ const DashboardSmallCard = ({
   icon,
   value,
   descriptor,
-}: SmallCardProps) => {
+}: DashboardSmallCardProps) => {
   return (
     <Card>
       <CardHeader className="flex justify-between items-center">
