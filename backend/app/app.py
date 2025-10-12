@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI
-from .db.models import User, create_db_and_tables
+from .db.models import User
 from .schemas import UserCreate, UserRead, UserUpdate
 from .auth.main_new import auth_backend, current_active_user, fastapi_users
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,7 +10,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await create_db_and_tables()
     yield
 
 # middleware

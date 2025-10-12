@@ -3,7 +3,6 @@ import asyncio
 from app import app
 from app.db import models
 from app.db.supabase_connect import engine, Base, get_async_session
-from app.db.models import create_db_and_tables
 
 async def create_db():
     async with engine.begin() as conn:
@@ -19,7 +18,6 @@ async def test_connection():
           print("Connection failed", e)
 
 async def main():
-    await create_db_and_tables()
     await test_connection()
 
 # specify http://localhost:8000

@@ -12,7 +12,3 @@ class User(SQLAlchemyBaseUserTable[UUID], Base):
     __tablename__ = "user"
     id = Column(PG_UUID(as_uuid = True), primary_key = True, default = uuid4)
     role = Column(String, nullable = False, default = "user")
-
-async def create_db_and_tables():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
