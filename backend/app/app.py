@@ -1,13 +1,27 @@
 from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI
-from app.db import User, create_db_and_tables
-from app.schemas import UserCreate, UserRead, UserUpdate
-from app.users import auth_backend, current_active_user, fastapi_users
-
+from .db.models import User, create_db_and_tables
+from .schemas import UserCreate, UserRead, UserUpdate
+from .auth.main_new import auth_backend, current_active_user, fastapi_users
 from fastapi.middleware.cors import CORSMiddleware
 # import fastapi, post-making library, and middleware
 
 #add middleware
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await create_db_and_tables()
+    yield
+
+# middleware
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+#initialize app instance
+app = FastAPI(lifespan = lifespan)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins = origins,
@@ -15,15 +29,6 @@ app.add_middleware(
     allow_methods = ["*"],
     allow_headers = ["*"]
 )
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await create_db_and_tables()
-    yield
-
-#initialize app instance
-app = FastAPI(lifespan = lifespan)
-
 # get routes
 posts = [
     {
@@ -31,13 +36,6 @@ posts = [
         "title": "Sample Post Title",
         "content": "This is a sample post content."
     },
-]
-
-
-# middleware
-origins = [
-    "http://localhost",
-    "http://localhost:3000",
 ]
 
 # tldr allow_origins of the origins list we just initialized that allows the localhost to connect

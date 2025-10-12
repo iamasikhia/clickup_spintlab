@@ -4,10 +4,11 @@ from typing import Optional, Union
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin, models, InvalidPasswordException
 from fastapi_users.authentication import (AuthenticationBackend, BearerTransport, JWTStrategy,)
+from .schemas import UserCreate
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 
-from fastapi_users.db import SQLAlchemyUserDatabase
-
-from .db import User, get_user_db
+from .db.models import User
+from .db.supabase_connect import get_user_db
 
 # use strong passphrase; keep secure
 SECRET = "SECRET"

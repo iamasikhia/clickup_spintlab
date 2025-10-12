@@ -1,7 +1,9 @@
 import uvicorn
 import asyncio
-from app.app import app
-from db.supabase_connect import engine, Base
+from app import app
+from app.db import models
+from app.db.supabase_connect import engine, Base, get_async_session
+from app.db.models import create_db_and_tables
 
 async def create_db():
     async with engine.begin() as conn:
@@ -16,11 +18,15 @@ async def test_connection():
      except Exception as e:
           print("Connection failed", e)
 
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(create_db())
-    asyncio.run(test_connection())
-    uvicorn.run("app.app:app", host="localhost", port=8000, log_level = "info", reload=True)
+async def main():
+    await create_db_and_tables()
+    await test_connection()
 
 # specify http://localhost:8000
 # add --port 8000 --reload
+
+if __name__ == "main":
+    asyncio.run(main())
+    # asyncio.run(create_db())
+    # asyncio.run(test_connection())
+    uvicorn.run("app.app:app", host="localhost", port=8000, log_level = "info", reload=True)
