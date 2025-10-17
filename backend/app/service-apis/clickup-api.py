@@ -86,7 +86,6 @@ def clickup_callback(code: str, state: str):
 
 # connect DB and clickup
 # get data from clickup THROUGH REST API
-# align josh to get all data from frontend
 # rest apis allow us to comm. to backend
 
 # page.tsx 
