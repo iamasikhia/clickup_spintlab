@@ -4,6 +4,7 @@ from .db.models import User
 from .schemas import UserCreate, UserRead, UserUpdate
 from .auth.main_new import auth_backend, current_active_user, fastapi_users
 from fastapi.middleware.cors import CORSMiddleware
+from .service_apis.clickup_api import router as clickup_router
 # import fastapi, post-making library, and middleware
 
 #add middleware
@@ -41,6 +42,8 @@ posts = [
 # necessary for frontend host to connect to different backend localhost website 
 
 users = []
+
+app.include_router(clickup_router)
 
 app.include_router(
     fastapi_users.get_auth_router(auth_backend), 
