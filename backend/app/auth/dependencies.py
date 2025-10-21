@@ -8,3 +8,4 @@ def require_role(role: str):
             raise HTTPException(status_code = 403, detail = "Not enough privileges")
         return user
     return checker
+

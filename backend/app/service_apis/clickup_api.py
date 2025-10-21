@@ -4,10 +4,10 @@ import os, secrets, requests, logging
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from app.db.supabase_connect import supabase
+from app.auth.main_new import current_active_user
 from cryptography.fernet import Fernet
 import os, requests
 
-print(Fernet.generate_key().decode())
 load_dotenv()
 
 # router object
@@ -21,9 +21,9 @@ CLICKUP_API_TOKEN = os.getenv("CLICKUP_API_TOKEN")
 CLICKUP_CLIENT_ID = os.getenv("CLICKUP_CLIENT_ID")
 CLICKUP_CLIENT_SECRET = os.getenv("CLICKUP_CLIENT_SECRET")
 CLICKUP_REDIRECT_URI = os.getenv("CLICKUP_REDIRECT_URI")
+FERNET_KEY = os.getenv("FERNET_KEY")
 
-
-# generate a random state to ensure secure tokens
+fernet = Fernet(FERNET_KEY)
 
 def encrypt_token(token: str) -> str:
     # encrypt ClickUp access token before db
@@ -34,7 +34,13 @@ def decrypt_token(token_enc: str) -> str:
     return fernet.decrypt(token_enc.encode()).decode()
 
 def generate_state():
+    # generate a random state to ensure secure tokens
     return secrets.token_urlsafe(32)
+
+def require_project_leader(user = Depends(current_active_user)):
+    if user.role != "project_leader":
+        raise HTTPException(status_code = 403, detail = "Not authorized")
+    return user
 
 user_tokens = {}
 # client_id = os.getenv("")
@@ -70,8 +76,8 @@ def authorize_clickup():
     return RedirectResponse(url = auth_url)
 
 # oauth callback - exchange code for token
-@router.get("/callback")
-def clickup_callback(code: str, state: str):
+@router.get("oauth/callback")
+async def clickup_oauth_callback(code: str, user: User = Depends(current_active_user), state: str):
     # verify state parameter
     res = supabase.table("oauth_states").select("*").eq("state", state).execute()
     if not res.data:
@@ -92,20 +98,20 @@ def clickup_callback(code: str, state: str):
         logger.error(f"Token exchange failed: {e}")
         raise HTTPException(status_code = 502, detail = "Failed to connect to ClickUp")
 
-    data = response.json()
-    access_token = data.get("access_token")
+    access_token = res.json["access_token"]
 
     if not access_token:
         logger.error(f"Invalid token response: {data}")
         raise HTTPException(status_code = 400, detail = "Missing access token from ClickUp")
 
     # user_id = ""
-    encrypted_token = encrypt_token(access_token)
+    encrypted_token = fernet.encrypt(access_token.encode()).decode()
     # must make sure this complies with supabase tables?
-    # supabase.table("clickup_tokens").upsert({
+    # but like this is The Code
+    # await supabase.table("clickup_tokens").upsert({
     #     "user_id" : user_id,
     #     "access_token" : access_token,
-    #     "state" : state
+    #     "state" : state,
     # }).execute()
 
     # clean up state tokens
@@ -116,7 +122,7 @@ def clickup_callback(code: str, state: str):
 @router.get("/teams")
 def get_clickup_teams(user_id: str):
 
-    res = supabase.table("clickup_tokens").select("access_token").eq("user_id", user_id).execute()
+    res = await supabase.table("clickup_tokens").select("access_token").eq("user_id", user.id).single().execute()
     if not res.data:
         raise HTTPException(status_code = 401, detail = "ClickUp not connected")
 
@@ -133,10 +139,20 @@ def get_clickup_teams(user_id: str):
 
     return clickup_res.json()
 
+
+@router.post("create-task")
+async def create_clickup_task(
+    data: TaskSchema,
+    user: User = Depends(require_project_leader)
+):
+    # ...
+
+
 # connect DB and clickup
 # get data from clickup THROUGH REST API
 # rest apis allow us to comm. to backend
 
+# redirect users to 
 # page.tsx 
 # collecting showPassword and setEmail, etc etc as email and password
 # /signup and /signin api
