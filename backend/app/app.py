@@ -29,6 +29,7 @@ app.add_middleware(
     allow_methods = ["*"],
     allow_headers = ["*"]
 )
+
 # get routes
 posts = [
     {
@@ -45,24 +46,34 @@ users = []
 
 app.include_router(clickup_router)
 
+# ALL OF THE FOLLOWING ADDS AUTHENTICATION POSTS FROM fastapi_users LIBRARY
+# custom routers are in clicku_api.py - prefix = "/clickup"
+
+# POST /auth/jwt/login
+# POST /auth/jwt/logout
+# etc
 app.include_router(
     fastapi_users.get_auth_router(auth_backend), 
     prefix = "/auth/jwt", 
     tags = ["auth"],
 )
 
+# POST /auth/register
 app.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
     prefix = "/auth",
     tags = ["auth"],
 )
 
+# POST /auth/forgot-password
+# POST /auth/reset-password
 app.include_router(
     fastapi_users.get_reset_password_router(),
     prefix = "/auth",
     tags = ["auth"],
 )
 
+# POST /auth/verify
 app.include_router(
     fastapi_users.get_verify_router(UserRead),
     prefix = "/auth",
@@ -74,6 +85,9 @@ app.include_router(
     prefix = "/users",
     tags = ["users"],
 )
+
+# custom routes
+# need @app endpoint for /users/me
 
 @app.get("/authenticated-route")
 async def authenticated_route(user: User = Depends(current_active_user)):

@@ -7,6 +7,7 @@ from app.db.supabase_connect import supabase
 from app.auth.main_new import current_active_user
 from cryptography.fernet import Fernet
 import os, requests
+from app.db.models import User
 
 load_dotenv()
 
@@ -51,11 +52,15 @@ user_tokens = {}
 
 
 @router.get("/test")
-def clickup_test():
-    if not CLICKUP_API_TOKEN:
+async def clickup_test(user: User = Depends(current_active_user)):
+    res = supabase.table("clickup_tokens").select("access_token").eq("user_id", str(user.id)).execute()
+    if not res.data:
         raise HTTPException(status_code = 500, detail = "Missing ClickUp token")
     
-    headers = {"Authorization": CLICKUP_API_TOKEN}
+    token_encrypted = res.data[0]["access_token"]
+    token = fernet.decrypt(token_encrypted.encode()).decode()
+
+    headers = {"Authorization": f"Bearer {token}"}
 
     try:
         response = requests.get("https://api.clickup.com/api/v2/team", headers = headers, timeout = 10)
@@ -67,21 +72,26 @@ def clickup_test():
     return {"status": "success",
             "data": response.json()}
             
+# now render Connect ClickUp button to call /clickup/auth
+
 @router.get("/auth")
 def authorize_clickup():
     # endpoint triggered when user clicks Connect to ClickUp
     state = generate_state()
-    auth_url = (f"https://app.clickup.com/api?client_id={CLICKUP_CLIENT_ID}&redirect_uri={CLICKUP_REDIRECT_URI}&state={state}")
+    auth_url = (f"https://app.clickup.com/api?client_id={CLICKUP_CLIENT_ID}"
+                f"&redirect_uri={CLICKUP_REDIRECT_URI}"
+                f"&state={state}"
+            )
     # supabase.table("oauth_states").insert({"state": state}).execute()
     return RedirectResponse(url = auth_url)
 
 # oauth callback - exchange code for token
-@router.get("oauth/callback")
-async def clickup_oauth_callback(code: str, user: User = Depends(current_active_user), state: str):
-    # verify state parameter
-    res = supabase.table("oauth_states").select("*").eq("state", state).execute()
-    if not res.data:
-        raise HTTPException(status_code = 400, detail = "Invalid or expired OAuth state")
+@router.get("/oauth/callback")
+async def clickup_oauth_callback(
+    code: str,
+    state: str,
+    user: User = Depends(current_active_user)
+    ):
 
     token_url = "https://api.clickup.com/api/v2/oauth/token"
     
@@ -94,25 +104,25 @@ async def clickup_oauth_callback(code: str, user: User = Depends(current_active_
     try:
         response = requests.post(token_url, data = payload, timeout = 10)
         response.raise_for_status()
+        data = response.json()
     except requests.RequestException as e:
         logger.error(f"Token exchange failed: {e}")
         raise HTTPException(status_code = 502, detail = "Failed to connect to ClickUp")
 
-    access_token = res.json["access_token"]
+    access_token = data("access_token")
 
     if not access_token:
         logger.error(f"Invalid token response: {data}")
         raise HTTPException(status_code = 400, detail = "Missing access token from ClickUp")
 
-    # user_id = ""
     encrypted_token = fernet.encrypt(access_token.encode()).decode()
     # must make sure this complies with supabase tables?
     # but like this is The Code
-    # await supabase.table("clickup_tokens").upsert({
-    #     "user_id" : user_id,
-    #     "access_token" : access_token,
-    #     "state" : state,
-    # }).execute()
+    supabase.table("clickup_tokens").upsert({
+        "user_id" : str(user.id),
+        "access_token" : encrypted_token,
+        "state" : state,
+    }).execute()
 
     # clean up state tokens
     # supabase.table("oauth_states").delete().eq("state", state).execute()
@@ -120,9 +130,8 @@ async def clickup_oauth_callback(code: str, user: User = Depends(current_active_
 
 # authorized api call/example clickup api request
 @router.get("/teams")
-def get_clickup_teams(user_id: str):
-
-    res = await supabase.table("clickup_tokens").select("access_token").eq("user_id", user.id).single().execute()
+async def get_clickup_teams(user_id: str):
+    res = supabase.table("clickup_tokens").select("access_token").eq("user_id", user.id).single().execute()
     if not res.data:
         raise HTTPException(status_code = 401, detail = "ClickUp not connected")
 
@@ -140,11 +149,11 @@ def get_clickup_teams(user_id: str):
     return clickup_res.json()
 
 
-@router.post("create-task")
-async def create_clickup_task(
-    data: TaskSchema,
-    user: User = Depends(require_project_leader)
-):
+# @router.post("create-task")
+# async def create_clickup_task(
+    # data: TaskSchema,
+    # user: User = Depends(require_project_leader)
+# ):
     # ...
 
 
