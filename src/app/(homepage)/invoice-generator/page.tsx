@@ -1,6 +1,5 @@
 "use client";
 
-import clsx from "clsx";
 import { LucidePlus } from "lucide-react";
 import { useState } from "react";
 import { Heading } from "@/components/heading";
