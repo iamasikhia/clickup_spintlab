@@ -3,7 +3,7 @@
 import { LucidePlus } from "lucide-react";
 import { useState } from "react";
 import { Heading } from "@/components/heading";
-import { InvoiceCreateForm } from "@/components/invoice-create-form";
+import { InvoiceCreateCard } from "@/components/invoice-create-card";
 import { RecentInvoiceCard } from "@/components/recent-invoice-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,7 +54,7 @@ const InvoiceGenerator = () => {
           />
 
           <div className="fixed inset-0 flex items-center justify-center z-50">
-            <InvoiceCreateForm
+            <InvoiceCreateCard
               onClose={() => setShowInvoiceCreateForm(false)}
             />
           </div>
