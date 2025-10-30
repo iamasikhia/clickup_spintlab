@@ -1,9 +1,10 @@
 from fastapi_users.authentication import AuthenticationBackend, BearerTransport, JWTStrategy
 from fastapi_users import FastAPIUsers
+from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
+from app.db.supabase_connect import get_db
 import fastapi_users
 from app.db.models import User
 from fastapi import Depends
-from app.db.supabase_connect import get_user_db
 from .user_manager import UserManager
 import uuid
 from uuid import UUID
@@ -14,7 +15,10 @@ PUBLIC_KEY = "PUBLIC"
 # fix link
 bearer_transport = BearerTransport(tokenUrl = "auth/jwt/login")
 
-async def get_user_manager(user_db = Depends(get_user_db)):
+def get_user_db(session = Depends(get_db)):
+     yield SQLAlchemyUserDatabase(session, User)
+
+def get_user_manager(user_db = Depends(get_user_db)):
     yield UserManager(user_db)
 
 def get_jwt_strategy() -> JWTStrategy:
