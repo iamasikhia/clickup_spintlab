@@ -16,7 +16,8 @@ async def lifespan(app: FastAPI):
 # middleware
 origins = [
     "http://localhost",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "clickup-spintlab-kiy3.vercel.app/"
 ]
 
 app.add_middleware(
