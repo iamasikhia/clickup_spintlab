@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smart Invoice AI",
+  title: "Smart Invoice  AI",
   description: "AI powered smart invoicing tool",
 };
 
