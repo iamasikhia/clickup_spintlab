@@ -5,19 +5,20 @@ import asyncio
 import asyncpg
 
 import supabase
+from sqlalchemy.engine import URL
 from supabase import create_client, Client
 from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.pool import NullPool
 from sqlalchemy.orm import sessionmaker, declarative_base
 from fastapi import Depends
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
-from .base_model import Base
-from sqlalchemy.pool import NullPool
-asyncpg.connection._STATEMENT_CACHE_SIZE = 0
+
 
 # Load environment variables from .env
 load_dotenv()
+
+Base = declarative_base()
 
 # Fetch variables
 USER = os.getenv("DB_USER")
@@ -25,32 +26,40 @@ PASSWORD = os.getenv("DB_PASSWORD")
 HOST = os.getenv("DB_HOST")
 PORT = os.getenv("DB_PORT")
 DBNAME = os.getenv("DB_NAME")
-
-URL = f"postgresql+asyncpg://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}"
 KEY = os.getenv("KEY")
 
-if not URL:
-    raise ValueError("Missing environment variable: URL")
+# DB_URL = f"postgresql+asyncpg://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}"
 
-if not KEY:
-    raise ValueError("Missing environment variable: KEY")
-
-engine = create_engine(
-     URL, 
-     echo = True,
-     pool_pre_ping = True
+DB_URL = URL.create(
+     drivername = "postgresql+asyncpg",
+     username = USER,
+     password = PASSWORD,
+     host = HOST,
+     port = PORT,
+     database = DBNAME
 )
 
-SyncSessionLocal = sessionmaker(
+engine = create_async_engine(
+     DB_URL,
+     echo = True,
+     future = True
+)
+
+async_session_maker = async_sessionmaker(
      bind = engine, 
-     autocommit = False,
-     autoflush = False)
+     class_ = AsyncSession,
+     expire_on_commit = False,
+     )
 
 Base = declarative_base() # ORM models
 
-def get_db():
-     db = SyncSessionLocal()
-     try:
-          yield db
-     finally:
-          db.close()
+async def get_async_session():
+     async with async_session_maker() as session:
+          yield session
+
+# def get_db():
+#      db = SyncSessionLocal()
+#      try:
+#           yield db
+#      finally:
+#           db.close()

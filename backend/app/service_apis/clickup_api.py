@@ -8,6 +8,7 @@ from app.auth.main_new import current_active_user
 from cryptography.fernet import Fernet
 import os, requests
 from app.db.models import User
+from sqlalchemy.engine import URL
 
 load_dotenv()
 
@@ -23,8 +24,11 @@ CLICKUP_CLIENT_ID = os.getenv("CLICKUP_CLIENT_ID")
 CLICKUP_CLIENT_SECRET = os.getenv("CLICKUP_CLIENT_SECRET")
 CLICKUP_REDIRECT_URI = os.getenv("CLICKUP_REDIRECT_URI")
 FERNET_KEY = os.getenv("FERNET_KEY")
+SUPABASE_URL = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
+RLS_KEY = os.getenv("SUPABASE_RLS_POLICY_KEY")
 
 fernet = Fernet(FERNET_KEY)
+supabase: Client = create_client(SUPABASE_URL, RLS_KEY)
 
 def encrypt_token(token: str) -> str:
     # encrypt ClickUp access token before db
@@ -42,14 +46,6 @@ def require_project_leader(user = Depends(current_active_user)):
     if user.role != "project_leader":
         raise HTTPException(status_code = 403, detail = "Not authorized")
     return user
-
-user_tokens = {}
-# client_id = os.getenv("")
-# redirect_uri = ""
-# state = ""
-# secret = "" # or client_secret, DO NOT ADD!
-# code = ""
-
 
 @router.get("/test")
 async def clickup_test(user: User = Depends(current_active_user)):
@@ -75,41 +71,51 @@ async def clickup_test(user: User = Depends(current_active_user)):
 # now render Connect ClickUp button to call /clickup/auth
 
 @router.get("/auth")
-def authorize_clickup():
+def authorize_clickup(user: User = Depends(current_active_user)):
     # endpoint triggered when user clicks Connect to ClickUp
     state = generate_state()
-    auth_url = (f"https://app.clickup.com/api?client_id={CLICKUP_CLIENT_ID}"
-                f"&redirect_uri={CLICKUP_REDIRECT_URI}"
-                f"&state={state}"
+    supabase.table("oauth_states").insert(
+        {
+            "state": state, 
+            "user_id": str(user.id)
+        }
+        ).execute()
+    
+    auth_url = (f"https://app.clickup.com/api?client_id={CLICKUP_CLIENT_ID}&redirect_uri={CLICKUP_REDIRECT_URI}&state={state}"
             )
-    # supabase.table("oauth_states").insert({"state": state}).execute()
     return RedirectResponse(url = auth_url)
 
 # oauth callback - exchange code for token
 @router.get("/oauth/callback")
 async def clickup_oauth_callback(
     code: str,
-    state: str,
-    user: User = Depends(current_active_user)
+    state: str
     ):
+
+    res = supabase.table("oauth_states").select("user_id").eq("state", state).single().execute()
+    if not res.data:
+        raise HTTPException(status_code = 400, detail = "Invalid state")
+    
+    user_id = res.data["user_id"]
 
     token_url = "https://api.clickup.com/api/v2/oauth/token"
     
     payload = {
         "client_id": CLICKUP_CLIENT_ID,
         "client_secret": CLICKUP_CLIENT_SECRET,
-        "code": code
+        "code": code,
+        "redirect_uri": CLICKUP_REDIRECT_URI,
     }
 
     try:
-        response = requests.post(token_url, data = payload, timeout = 10)
+        response = requests.post(token_url, json = payload, timeout = 10)
         response.raise_for_status()
         data = response.json()
     except requests.RequestException as e:
         logger.error(f"Token exchange failed: {e}")
         raise HTTPException(status_code = 502, detail = "Failed to connect to ClickUp")
 
-    access_token = data("access_token")
+    access_token = data.get("access_token")
 
     if not access_token:
         logger.error(f"Invalid token response: {data}")
@@ -125,7 +131,7 @@ async def clickup_oauth_callback(
     }).execute()
 
     # clean up state tokens
-    # supabase.table("oauth_states").delete().eq("state", state).execute()
+    supabase.table("oauth_states").delete().eq("state", state).execute()
     return JSONResponse({"message": "Clickup connected successfully."})
 
 # authorized api call/example clickup api request
@@ -137,7 +143,7 @@ async def get_clickup_teams(user_id: str):
 
     token_enc = res.data[0]["access_token"]
     token = decrypt_token(token_enc)
-    headers = {"Authorization": token}
+    headers = {"Authorization": f"Bearer {token}"}
 
     try:
         clickup_res = requests.get("https://api.clickup.com/api/v2/team", headers=headers, timeout=10)

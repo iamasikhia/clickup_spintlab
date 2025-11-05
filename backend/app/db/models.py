@@ -16,10 +16,11 @@ from datetime import datetime
 class User(SQLAlchemyBaseUserTable[UUID], Base):
     __tablename__ = "users"
 
+    name = Column(String, nullable = True)
     id = Column(PG_UUID(as_uuid = True), primary_key = True, default = uuid.uuid4)
     role = Column(String, nullable = False, default = "user")
     # email = Column(String, nullable = False, unique = True)
     # name = Column(String, nullable = True)
-    # auth_method = Column(String, nullable = True, default = "email") 
+    auth_method = Column(String, nullable = True, default = "email") 
     # created_at = Column(DateTime(timezone = True), server_default = func.now())
     

@@ -6,17 +6,17 @@ from fastapi_users import schemas
 # handles API data shape. may need to add custom fields later
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
-    name: str | None = None
+    name: str | None = "John Doe"
     auth_method: str | None = "email"
     role: str | None = "user"
 
 
 class UserCreate(schemas.BaseUserCreate):
-    name: str | None = None
+    name: str | None = "John Doe"
     role: str | None = "user"
     auth_method: str | None = "email"
 
 
 class UserUpdate(schemas.BaseUserUpdate):
-    name: str | None = None
+    name: str | None = "John Doe"
     role: str | None = "user"
