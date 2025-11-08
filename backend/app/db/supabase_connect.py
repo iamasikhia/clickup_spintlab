@@ -13,7 +13,7 @@ from sqlalchemy.pool import NullPool
 from sqlalchemy.orm import sessionmaker, declarative_base
 from fastapi import Depends
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
-
+from .models import User
 
 # Load environment variables from .env
 load_dotenv()
@@ -56,6 +56,9 @@ Base = declarative_base() # ORM models
 async def get_async_session():
      async with async_session_maker() as session:
           yield session
+
+async def get_user_db(session: AsyncSession = Depends(get_async_session)):
+     yield SQLAlchemyUserDatabase(session, User)
 
 # def get_db():
 #      db = SyncSessionLocal()

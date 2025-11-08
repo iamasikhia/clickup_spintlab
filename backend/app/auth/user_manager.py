@@ -11,7 +11,7 @@ KEY = os.getenv("SUPABASE_KEY")
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     reset_password_token_secret = KEY
-    verificiation_token_secret = KEY
+    verification_token_secret = KEY
 
     async def on_after_register(self, user: User, request = None):
         print(f"User {user.id} has registered.")

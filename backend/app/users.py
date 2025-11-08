@@ -4,23 +4,25 @@ from typing import Optional, Union
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers, UUIDIDMixin, models, InvalidPasswordException
 from fastapi_users.authentication import (AuthenticationBackend, BearerTransport, JWTStrategy,)
-from .schemas import UserCreate
+from schemas import UserCreate
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 
-from .db.models import User
-from .db.supabase_connect import get_user_db
+from db.models import User
+from db.supabase_connect import get_user_db
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # use strong passphrase; keep secure
-SECRET = "SECRET"
-
+SECRET_KEY = os.getenv("SECRET")
 # for BaseUserManager, two generic types are defined
 # user - user model defined in db.py for each user
 # UUID - correspond to the type of ID used on the model (UUID)
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
-    reset_password_token_secret = SECRET
-    verification_token_secret = SECRET
-
+    reset_password_token_secret = str(SECRET_KEY)
+    verification_token_secret = str(SECRET_KEY)
     # validate password for user registration
     async def validate_password(self, password: str, user: Union[UserCreate, User]) -> None:
         if len(password) < 8:

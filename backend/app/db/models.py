@@ -7,7 +7,6 @@ from sqlalchemy.sql import func
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from .base_model import Base
-from .supabase_connect import engine
 from datetime import datetime
 
 # define sqlalchemy model for average user, ensuring it matches supabase schema

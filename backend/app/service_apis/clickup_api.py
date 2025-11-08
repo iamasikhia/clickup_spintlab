@@ -1,14 +1,13 @@
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException, Query
 from fastapi.responses import RedirectResponse, JSONResponse
-import os, secrets, requests, logging
+import os, secrets, requests, logging, supabase
 from dotenv import load_dotenv
 from supabase import create_client, Client
-from app.db.supabase_connect import supabase
 from app.auth.main_new import current_active_user
 from cryptography.fernet import Fernet
-import os, requests
 from app.db.models import User
 from sqlalchemy.engine import URL
+from urllib.parse import urlencode
 
 load_dotenv()
 
@@ -81,16 +80,23 @@ def authorize_clickup(user: User = Depends(current_active_user)):
         }
         ).execute()
     
-    auth_url = (f"https://app.clickup.com/api?client_id={CLICKUP_CLIENT_ID}&redirect_uri={CLICKUP_REDIRECT_URI}&state={state}"
-            )
+    query_params = {
+        "client_id": CLICKUP_CLIENT_ID,
+        "redirect_uri": CLICKUP_REDIRECT_URI,
+        "state": state,
+        "response_type": "code"
+    }
+
+    auth_url = f"https://app.clickup.com/api/v2/oauth/authorize?{urlencode(query_params)}"
+    
     return RedirectResponse(url = auth_url)
 
 # oauth callback - exchange code for token
 @router.get("/oauth/callback")
 async def clickup_oauth_callback(
-    code: str,
-    state: str
-    ):
+    code: str = Query(...),
+    state: str = Query(...)
+):
 
     res = supabase.table("oauth_states").select("user_id").eq("state", state).single().execute()
     if not res.data:
@@ -125,7 +131,7 @@ async def clickup_oauth_callback(
     # must make sure this complies with supabase tables?
     # but like this is The Code
     supabase.table("clickup_tokens").upsert({
-        "user_id" : str(user.id),
+        "user_id" : str(user_id),
         "access_token" : encrypted_token,
         "state" : state,
     }).execute()
@@ -137,7 +143,7 @@ async def clickup_oauth_callback(
 # authorized api call/example clickup api request
 @router.get("/teams")
 async def get_clickup_teams(user_id: str):
-    res = supabase.table("clickup_tokens").select("access_token").eq("user_id", user.id).single().execute()
+    res = supabase.table("clickup_tokens").select("access_token").eq("user_id", user_id).single().execute()
     if not res.data:
         raise HTTPException(status_code = 401, detail = "ClickUp not connected")
 
