@@ -1,11 +1,14 @@
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+from fpdf import FPDF
+
 
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_KEY")
 client = OpenAI(api_key = OPENAI_API_KEY)
+pdf = FPDF()
 
 task = "UI/UX Design"
 rate = "75"
@@ -24,3 +27,11 @@ response = client.chat.completions.create(
 
 output = response.choices[0].message.content
 print(output)
+
+pdf.add_page()
+pdf.set_font('Helvetica', size = 12)
+pdf.cell(text = client_email, ln = True)
+pdf.output("invoice.pdf")
+
+# You can create a class for footers/headers/etc and add more things.
+# Docs are here: https://py-pdf.github.io/fpdf2/Tutorial.html
