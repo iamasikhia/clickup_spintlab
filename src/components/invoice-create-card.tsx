@@ -4,6 +4,7 @@ import { LucideEye, LucideWand, LucideX } from "lucide-react";
 import Form from "next/form";
 import { useState } from "react";
 import { InvoiceCreateTaskCard } from "./invoice-create-task-card";
+import { InvoicePreviewDialog } from "./invoice-preview-dialog";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -103,12 +104,17 @@ const InvoiceCreateCard = ({ onClose }: InvoiceCreateCardProps) => {
 
       <CardFooter>
         <div className="flex gap-x-2">
-          <Button variant="outline">
-            <div className="flex justify-between items-center gap-x-2">
-              <LucideEye />
-              <span>Preview</span>
-            </div>
-          </Button>
+          <InvoicePreviewDialog
+            invoiceName="Preview"
+            file="/invoices/example_invoice.pdf"
+          >
+            <Button variant="outline">
+              <div className="flex justify-between items-center gap-x-2">
+                <LucideEye />
+                <span>Preview</span>
+              </div>
+            </Button>
+          </InvoicePreviewDialog>
           <Button>Create Invoice</Button>
           <Button variant="outline">Cancel</Button>
         </div>
