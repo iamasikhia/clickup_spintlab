@@ -87,8 +87,8 @@ def authorize_clickup(user: User = Depends(current_active_user)):
         "response_type": "code"
     }
 
-    auth_url = f"https://app.clickup.com/api/v2/oauth/authorize?{urlencode(query_params)}"
-    
+    auth_url = f"https://app.clickup.com/api?{urlencode(query_params)}"
+    print(auth_url)
     return RedirectResponse(url = auth_url)
 
 # oauth callback - exchange code for token
