@@ -1,4 +1,3 @@
-import { DialogTitle } from "@radix-ui/react-dialog";
 import { InvoicePreviewDialog } from "./invoice-preview-dialog";
 import { Badge } from "./ui/badge";
 import {
@@ -8,13 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTrigger,
-} from "./ui/dialog";
 
 type RecentInvoiceCardProps = {
   invoiceName: string;
