@@ -1,3 +1,4 @@
+import { DialogTitle } from "@radix-ui/react-dialog";
 import { Badge } from "./ui/badge";
 import {
   Card,
@@ -6,6 +7,13 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTrigger,
+} from "./ui/dialog";
 
 type RecentInvoiceCardProps = {
   invoiceName: string;
@@ -25,21 +33,37 @@ const RecentInvoiceCard = ({
   status,
 }: RecentInvoiceCardProps) => {
   return (
-    <Card className="flex flex-row justify-between items-center">
-      <CardHeader>
-        <CardTitle>Invoice {invoiceName}</CardTitle>
-        <CardDescription className="whitespace-nowrap">
-          <div>
-            {companyName} • {time} hours
-          </div>
-          <div>Created: {createdDate}</div>
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col items-end gap-y-1">
-        <span className="font-semibold">${amount}</span>
-        <Badge>{status}</Badge>
-      </CardContent>
-    </Card>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Card className="flex flex-row justify-between items-center">
+          <CardHeader>
+            <CardTitle>Invoice {invoiceName}</CardTitle>
+            <CardDescription className="whitespace-nowrap">
+              <div>
+                {companyName} • {time} hours
+              </div>
+              <div>Created: {createdDate}</div>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-end gap-y-1">
+            <span className="font-semibold">${amount}</span>
+            <Badge>{status}</Badge>
+          </CardContent>
+        </Card>
+      </DialogTrigger>
+      <DialogContent className="min-w-[800px]">
+        <DialogHeader>
+          <DialogTitle>{invoiceName}</DialogTitle>
+          <DialogDescription>Invoice for {companyName}</DialogDescription>
+        </DialogHeader>
+        <iframe
+          src="/invoices/example_invoice.pdf"
+          width="100%"
+          height="600px"
+          title="Invoice PDF"
+        />
+      </DialogContent>
+    </Dialog>
   );
 };
 
