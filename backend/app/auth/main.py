@@ -25,7 +25,8 @@ fake_users = {
         "username": "paul_ise",
         "full_name": "Paul Ise",
         "email": "paul_ise@example.com",
-        "hashed_password": "",
+        "password": "test",
+        "hashed_password": "test",
         "disabled": False,
     }
 }
