@@ -21,9 +21,13 @@ type InvoiceCreateCardProps = {
   onClose: () => void;
 };
 
+
+
 const InvoiceCreateCard = ({ onClose }: InvoiceCreateCardProps) => {
   const [taskSelected, setTaskSelected] = useState(true);
+  const description = fetchData();
 
+  
   return (
     <Card className="w-[30%]">
       <CardHeader className="flex justify-between items-center">
@@ -114,7 +118,18 @@ const InvoiceCreateCard = ({ onClose }: InvoiceCreateCardProps) => {
         </div>
       </CardFooter>
     </Card>
-  );
+  );  
 };
+
+async function fetchData() {
+  
+  const response = await fetch(
+    `/api/openai-route?title=${title}=${time}&rate=${rate}&logs=${logs}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to generate.");
+  }
+}
 
 export { InvoiceCreateCard };
