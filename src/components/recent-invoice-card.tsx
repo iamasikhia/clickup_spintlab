@@ -1,3 +1,4 @@
+import { InvoicePreviewDialog } from "./invoice-preview-dialog";
 import { Badge } from "./ui/badge";
 import {
   Card,
@@ -25,21 +26,27 @@ const RecentInvoiceCard = ({
   status,
 }: RecentInvoiceCardProps) => {
   return (
-    <Card className="flex flex-row justify-between items-center">
-      <CardHeader>
-        <CardTitle>Invoice {invoiceName}</CardTitle>
-        <CardDescription className="whitespace-nowrap">
-          <div>
-            {companyName} • {time} hours
-          </div>
-          <div>Created: {createdDate}</div>
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col items-end gap-y-1">
-        <span className="font-semibold">${amount}</span>
-        <Badge>{status}</Badge>
-      </CardContent>
-    </Card>
+    <InvoicePreviewDialog
+      invoiceName={invoiceName}
+      companyName={companyName}
+      file="/invoices/example_invoice.pdf"
+    >
+      <Card className="flex flex-row justify-between items-center">
+        <CardHeader>
+          <CardTitle>Invoice {invoiceName}</CardTitle>
+          <CardDescription className="whitespace-nowrap">
+            <div>
+              {companyName} • {time} hours
+            </div>
+            <div>Created: {createdDate}</div>
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col items-end gap-y-1">
+          <span className="font-semibold">${amount}</span>
+          <Badge>{status}</Badge>
+        </CardContent>
+      </Card>
+    </InvoicePreviewDialog>
   );
 };
 
