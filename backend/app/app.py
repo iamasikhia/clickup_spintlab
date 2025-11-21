@@ -90,6 +90,14 @@ app.include_router(
 async def authenticated_route(user: User = Depends(current_active_user)):
     return {"message": f"Hello {user.email}, welcome to authorization."}
 
+@app.get("/openai-route")
+async def openai_route(title: str, time: int, rate: int, logs: int, user: User = Depends(current_active_user)):
+    from .service_apis.openai_api import output
+
+    
+    return output
+
+
 # # GET routes
 # @app.get("/posts", tags=["posts"])
 # async def get_posts() -> dict:
