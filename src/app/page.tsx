@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { url } from "inspector";
 
 export default function SignUpPage() {
   return (
@@ -23,13 +25,15 @@ export default function SignUpPage() {
         </div>
 
         {/* Google Sign Up Button */}
-        <Button
-          variant="outline"
-          className="w-full mb-4 bg-white border-gray-300 hover:bg-gray-50"
-          type="button"
-        >
-          Connect with ClickUp
-        </Button>
+        <Link href={url}>
+          <Button
+            variant="outline"
+            className="w-full mb-4 bg-white border-gray-300 hover:bg-gray-50"
+            type="button"
+          >
+            Connect with ClickUp
+          </Button>
+        </Link>
       </div>
     </div>
   );
