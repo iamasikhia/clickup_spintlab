@@ -27,18 +27,24 @@ const TaskCreateDialog = () => {
           <DialogHeader>
             <DialogTitle>Create New Task</DialogTitle>
           </DialogHeader>
+
+          {/* DIALOG FORM INPUTS */}
+
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="task-name">Task Name</Label>
             <Input id="task-name" placeholder="Enter task name" required />
           </div>
+
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="rate">Hourly Rate ($)</Label>
             <Input id="rate" type="number" placeholder="75" />
           </div>
+
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="description">Description (Optional)</Label>
             <Input id="description" placeholder="Enter task description" />
           </div>
+
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
