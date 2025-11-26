@@ -22,8 +22,6 @@ type InvoiceCreateCardProps = {
   onClose: () => void;
 };
 
-
-
 const InvoiceCreateCard = ({ onClose }: InvoiceCreateCardProps) => {
   const [taskSelected, setTaskSelected] = useState(true);
   const description = fetchData();
