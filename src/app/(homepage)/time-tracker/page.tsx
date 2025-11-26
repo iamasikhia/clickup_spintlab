@@ -1,10 +1,6 @@
-import {
-  LucideClock,
-  LucidePlay,
-  LucidePlus,
-  LucideSquare,
-} from "lucide-react";
+import { LucideClock, LucidePlay, LucideSquare } from "lucide-react";
 import { Heading } from "@/components/heading";
+import { TimeTrackerDialog } from "@/components/time-tracker-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,10 +13,7 @@ const TimeTracker = () => {
           title="Time Tracker"
           description="Track time for your projects and manage time logs"
         />
-        <Button className="mr-8" variant="outline">
-          <LucidePlus />
-          Manual Entry
-        </Button>
+        <TimeTrackerDialog />
       </div>
       <Card className="mx-8">
         <CardHeader>
