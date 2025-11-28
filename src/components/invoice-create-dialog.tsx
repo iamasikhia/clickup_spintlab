@@ -42,7 +42,7 @@ const InvoiceCreateDialog = () => {
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="task">Select Task to Invoice</Label>
             <Select>
-              <SelectTrigger id="task" className="w-full">
+              <SelectTrigger id="task" name="task" className="w-full">
                 <SelectValue placeholder="Select a task" />
               </SelectTrigger>
               <SelectContent>
@@ -56,13 +56,19 @@ const InvoiceCreateDialog = () => {
 
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="name">Client Name</Label>
-            <Input id="name" placeholder="Enter client/company name" required />
+            <Input
+              id="name"
+              name="name"
+              placeholder="Enter client/company name"
+              required
+            />
           </div>
 
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="email">Client Email</Label>
             <Input
               id="email"
+              name="email"
               placeholder="Enter client/company email"
               required
             />
@@ -78,6 +84,7 @@ const InvoiceCreateDialog = () => {
               </Button>
             </div>
             <Textarea
+              id="description"
               name="description"
               placeholder="Description of services provided"
             />
@@ -86,6 +93,7 @@ const InvoiceCreateDialog = () => {
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="notes">Notes & Terms</Label>
             <Textarea
+              id="notes"
               name="notes"
               placeholder="Payment terms, additional notes, etc."
             />

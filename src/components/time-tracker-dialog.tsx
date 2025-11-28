@@ -48,7 +48,7 @@ const TimeTrackerDialog = () => {
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="task">Select a Task</Label>
             <Select>
-              <SelectTrigger id="task" className="w-full">
+              <SelectTrigger id="task" name="task" className="w-full">
                 <SelectValue placeholder="Select a task" />
               </SelectTrigger>
               <SelectContent>
@@ -64,6 +64,7 @@ const TimeTrackerDialog = () => {
             <Label htmlFor="hours">Hours</Label>
             <Input
               id="hours"
+              name="hours"
               type="number"
               placeholder="0.00"
               step="0.25"
@@ -92,7 +93,11 @@ const TimeTrackerDialog = () => {
 
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="description">Description (Optional)</Label>
-            <Textarea id="description" placeholder="What did you work on?" />
+            <Textarea
+              id="description"
+              name="description"
+              placeholder="What did you work on?"
+            />
           </div>
 
           <DialogFooter>
