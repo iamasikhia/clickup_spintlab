@@ -1,7 +1,6 @@
-import { LucidePlus } from "lucide-react";
 import { Heading } from "@/components/heading";
 import { TaskCard } from "@/components/task-card";
-import { Button } from "@/components/ui/button";
+import { TaskCreateDialog } from "@/components/task-create-dialog";
 
 const TaskManager = () => {
   return (
@@ -11,10 +10,7 @@ const TaskManager = () => {
           title="Task Manager"
           description="Create and manage your projects and hourly rates"
         />
-        <Button className="mr-8">
-          <LucidePlus />
-          Add Task
-        </Button>
+        <TaskCreateDialog />
       </div>
       <div className="mx-8 grid grid-cols-3 gap-x-8 gap-y-8">
         <TaskCard

@@ -41,11 +41,6 @@ const AppSidebar = () => {
       icon: LucideReceiptText,
     },
     {
-      title: "Invoice Approval",
-      url: "/invoice-approval",
-      icon: LucideCheckCircle,
-    },
-    {
       title: "Export and Share",
       url: "/export",
       icon: LucideSend,
