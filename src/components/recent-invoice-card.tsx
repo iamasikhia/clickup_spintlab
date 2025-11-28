@@ -43,7 +43,6 @@ const RecentInvoiceCard = ({
         </CardHeader>
         <CardContent className="flex flex-col items-end gap-y-1">
           <span className="font-semibold">${amount}</span>
-          <Badge>{status}</Badge>
         </CardContent>
       </Card>
     </InvoicePreviewDialog>
