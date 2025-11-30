@@ -1,6 +1,6 @@
 import { Heading } from "@/components/heading";
 import { TaskCard } from "@/components/task-card";
-import { TaskCreateDialog } from "@/components/task-create-dialog";
+import { TaskDialog } from "@/components/task-dialog";
 
 const TaskManager = () => {
   return (
@@ -10,7 +10,7 @@ const TaskManager = () => {
           title="Task Manager"
           description="Create and manage your projects and hourly rates"
         />
-        <TaskCreateDialog />
+        <TaskDialog mode="CREATE" />
       </div>
       <div className="mx-8 grid grid-cols-3 gap-x-8 gap-y-8">
         <TaskCard
