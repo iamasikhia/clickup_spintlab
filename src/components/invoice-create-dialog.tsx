@@ -77,7 +77,6 @@ export default function InvoiceCreateDialog() {
                 <SelectValue placeholder="Select a task" />
               </SelectTrigger>
               <SelectContent>
-                {/* TODO: USER'S TASKS FROM DB SHOULD BE PUT INTO THIS SELECT */}
                 {loading && <SelectItem>Loading tasks...</SelectItem>}
                 {error && <SelectItem>{error}</SelectItem>}
                 {!loading && !error && tasks.length === 0 && (
