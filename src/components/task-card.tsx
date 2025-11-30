@@ -1,4 +1,4 @@
-import { LucideDollarSign, LucidePen, LucideTrash } from "lucide-react";
+import { LucideDollarSign, LucideTrash } from "lucide-react";
 import { TaskDialog } from "./task-dialog";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
