@@ -151,14 +151,14 @@ async def get_clickup_tasks(user: User = Depends(current_active_user)):
     # '.eq' means "equals"
     # so "where user_id equals our given user_id"
     # .single() means excepting only a single row
-    response = supabase.table("clickup_tokens").select("id, user_id, access_token, team_id").eq("user_id", str(user.id)).single().execute()
+    response = (supabase.table("clickup_tokens").select("id, user_id, access_token, team_id").eq("user_id", str(user.id)).single().execute())
     if not response.data:
         raise HTTPException(status_code = 401, detail = "ClickUp not connected")
     
     token_enc = response.data["access_token"]
-    team_id = response.data.get("team_id")
     token = decrypt_token(token_enc)
     headers = {"Authorization": f"Bearer {token}"}
+    team_id = response.data.get("team_id")
 
     if not team_id:
         try:
@@ -179,19 +179,19 @@ async def get_clickup_tasks(user: User = Depends(current_active_user)):
         team_id = teams[0]['id']
         
         try:
-            update_res = supabase.table("clickup_tokens").update({"team_id": team_id}).eq("id", response.data["id"]).execute()
-
+            update_res = (supabase.table("clickup_tokens").update({"team_id": team_id}).eq("id", response.data["id"]).execute())
+            logger.info(f"Stored team_id {team_id} for user {user.id}")
         except Exception as e:
             logger.error(f"Failed to update team_id in database: {e}")
 
-        try:
-            clickup_response = requests.get(f"https://api.clickup.com/api/v2/team/{team_id}/task", headers = headers, timeout = 10)
-            clickup_response.raise_for_status()
-        except requests.RequestException as e:
-            logger.error(f"ClickUp API request failed: {e}")
-            raise HTTPException(status_code = 502, detail = "ClickUp API request failed")
+    try:
+        tasks_response = requests.get(f"https://api.clickup.com/api/v2/team/{team_id}/task", headers = headers, timeout = 10)
+        tasks_response.raise_for_status()
+    except requests.RequestException as e:
+        logger.error(f"ClickUp API request failed: {e}")
+        raise HTTPException(status_code = 502, detail = "ClickUp API request failed")
 
-    return clickup_response.json()
+    return tasks_response.json()
 
 # @router.post("create-task")
 # async def create_clickup_task(
