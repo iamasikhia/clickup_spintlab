@@ -1,3 +1,5 @@
+"use client";
+
 import { LucideEye, LucidePlus, LucideWand } from "lucide-react";
 import Form from "next/form";
 import { InvoicePreviewDialog } from "./invoice-preview-dialog";
@@ -21,8 +23,37 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
+import { getClickUpTasks, type ClickUpTask } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
-const InvoiceCreateDialog = () => {
+export default function InvoiceCreateDialog() {
+  const [tasks, setTasks] = useState<ClickUpTask[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await getClickUpTasks();
+        setTasks(result);
+      } catch (err) {
+        console.error(err);
+        if (err instanceof Error && err.message === "No access token found") {
+          setError("Please log in before viewing your ClickUp tasks.");
+        } else {
+          setError("Could not fetch ClickUp tasks.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchTasks();
+  }, []);
+
   return (
     <Dialog>
       <Form action="">
@@ -47,9 +78,16 @@ const InvoiceCreateDialog = () => {
               </SelectTrigger>
               <SelectContent>
                 {/* TODO: USER'S TASKS FROM DB SHOULD BE PUT INTO THIS SELECT */}
-                <SelectItem value="task1">Task 1</SelectItem>
-                <SelectItem value="task2">Task 2</SelectItem>
-                <SelectItem value="task3">Task 3</SelectItem>
+                {loading && <SelectItem>Loading tasks...</SelectItem>}
+                {error && <SelectItem>{error}</SelectItem>}
+                {!loading && !error && tasks.length === 0 && (
+                  <SelectItem>No tasks found</SelectItem>
+                )}
+                {!loading && !error && tasks.map((task) => (
+                  <SelectItem key={task.id} value={task.id}>
+                    {task.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -123,5 +161,3 @@ const InvoiceCreateDialog = () => {
     </Dialog>
   );
 };
-
-export { InvoiceCreateDialog };
