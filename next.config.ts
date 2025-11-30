@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
         source: "/api/clickup/auth",
         destination: "http://localhost:8000/clickup/auth",
       },
+      {
+        source: "/api/clickup/tasks",
+        destination: "http://localhost:8000/clickup/tasks",
+      },
     ];
   },
 };
