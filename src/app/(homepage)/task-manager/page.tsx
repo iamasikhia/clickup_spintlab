@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Heading } from "@/components/heading";
 import { TaskCard } from "@/components/task-card";
 import { Button } from "@/components/ui/button";
+import { TaskCreateDialog } from "@/components/task-create-dialog";
 import { getClickUpTasks, type ClickUpTask } from "@/lib/utils";
 
 export default function TaskManager() {
@@ -35,7 +36,6 @@ export default function TaskManager() {
     fetchTasks();
   }, []);
 
-
   return (
     <div className="flex flex-col gap-y-8">
       <div className="flex flex-1 justify-between items-center">
@@ -43,10 +43,7 @@ export default function TaskManager() {
           title="Task Manager"
           description="Create and manage your projects and hourly rates"
         />
-        <Button className="mr-8">
-          <LucidePlus />
-          Add Task
-        </Button>
+        <TaskCreateDialog />
       </div>
 
       {loading && (
