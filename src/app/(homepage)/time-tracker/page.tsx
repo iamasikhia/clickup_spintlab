@@ -12,7 +12,7 @@ import { TimeTrackerDialog } from "@/components/time-tracker-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { formatSeconds } from "@/utils";
+import { formatSeconds } from "@/lib/utils";
 
 const TimeTracker = () => {
   const [isTracking, setIsTracking] = useState(false);

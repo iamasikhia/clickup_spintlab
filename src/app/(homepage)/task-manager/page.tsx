@@ -1,13 +1,10 @@
 "use client";
 
-import { LucidePlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Heading } from "@/components/heading";
 import { TaskCard } from "@/components/task-card";
 import { TaskDialog } from "@/components/task-dialog";
-import { Button } from "@/components/ui/button";
-import { TaskCreateDialog } from "@/components/task-create-dialog";
-import { getClickUpTasks, type ClickUpTask } from "@/lib/utils";
+import { type ClickUpTask, getClickUpTasks } from "@/lib/utils";
 
 export default function TaskManager() {
   const [tasks, setTasks] = useState<ClickUpTask[]>([]);
@@ -33,7 +30,7 @@ export default function TaskManager() {
         setLoading(false);
       }
     };
-  
+
     fetchTasks();
   }, []);
 
@@ -47,21 +44,15 @@ export default function TaskManager() {
         <TaskDialog mode="CREATE" />
       </div>
 
-      {loading && (
-        <p className="mx-8">Loading tasks from ClickUp...</p>
-      )}
+      {loading && <p className="mx-8">Loading tasks from ClickUp...</p>}
 
-      {error && (
-        <p className = "mx-8 text-sm text-red-500">
-          {error}
-        </p>
-      )}
+      {error && <p className="mx-8 text-sm text-red-500">{error}</p>}
 
       <div className="mx-8 grid grid-cols-3 gap-x-8 gap-y-8">
         {tasks.map((task) => (
           <TaskCard
-            key = {task.id}
-            title = {task.name}
+            key={task.id}
+            title={task.name}
             description="Description of the card"
             status={task.status?.status ?? "active"}
             rate="75.00"
@@ -71,4 +62,4 @@ export default function TaskManager() {
       </div>
     </div>
   );
-};
+}
