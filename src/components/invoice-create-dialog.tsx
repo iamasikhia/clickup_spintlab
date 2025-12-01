@@ -149,14 +149,13 @@ export default function InvoiceCreateDialog() {
           <div className="flex flex-col gap-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="description">Description</Label>
-              {/* TODO: AI GENERATION OF TASK DESCRIPTION */}
               <Button type = "button"
               onClick = {handleGeneration}
               variant = "outline"
               size="sm"
               disabled = {isGenerating}>
                 <LucideWand />
-                {isGenerating ? "Generating..." : "Ai Generate"}
+                {isGenerating ? "Generating..." : "AI Generate"}
               </Button>
             </div>
             <Textarea

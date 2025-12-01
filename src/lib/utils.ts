@@ -45,6 +45,12 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export async function getSmartBilling(params: GenerationParams): Promise<string> {
+  const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+
+  if (!token) {
+    throw new Error("No access token found");
+  }
+  
   const query = new URLSearchParams({
     title: params.title,
     time: params.time.toString(),
@@ -54,10 +60,19 @@ export async function getSmartBilling(params: GenerationParams): Promise<string>
   
   const response = await fetch(`/api/smart-billing?${query.toString()}`, {
     method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!response.ok) {
-    throw new Error("Failed to generate contextual description.");
+    let message = "Failed to generate contextual description.";
+
+    try {
+      const body = await response.json();
+      if (body?.detail) message = body.detail;
+    } catch {
+
+    }
+    throw new Error(message);
   }
 
   const data = await response.json();

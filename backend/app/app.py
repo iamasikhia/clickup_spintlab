@@ -6,6 +6,7 @@ from .schemas import UserCreate, UserRead, UserUpdate
 from .auth.main_new import auth_backend, current_active_user, fastapi_users
 from fastapi.middleware.cors import CORSMiddleware
 from .service_apis.clickup_api import router as clickup_router
+from .service_apis.openai_api import return_output
 # import fastapi, post-making library, and middleware
 
 app = FastAPI()
@@ -91,11 +92,9 @@ async def authenticated_route(user: User = Depends(current_active_user)):
     return {"message": f"Hello {user.email}, welcome to authorization."}
 
 @app.get("/smart-billing")
-async def openai_route(title: str, time: int, rate: int, logs: int, user: User = Depends(current_active_user)):
-    from .service_apis.openai_api import output
-    from .service_apis.openai_api import return_output
-    output = return_output(title=title, time=time, rate=rate, logs=logs)
-    return {"output": output}
+async def openai_route(title: str, time: float, rate: float, logs: int, user: User = Depends(current_active_user),):
+    description = return_output(title=title, time=time, rate=rate, logs=logs)
+    return {"description": description}
 
 
 # # GET routes
