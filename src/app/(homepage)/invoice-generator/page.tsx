@@ -24,7 +24,6 @@ const InvoiceGenerator = () => {
             time="10.5"
             createdDate="1/20/2024"
             amount="754.05"
-            status="approved"
           />
         </CardContent>
       </Card>

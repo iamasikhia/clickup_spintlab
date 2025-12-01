@@ -1,3 +1,5 @@
+"use client";
+
 import {
   LucideChartColumn,
   LucideClock,
@@ -5,6 +7,8 @@ import {
   LucideSend,
   LucideSettings,
 } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Button } from "./ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -45,6 +49,8 @@ const AppSidebar = () => {
     },
   ];
 
+  const pathname = usePathname();
+
   return (
     <Sidebar className="p-4">
       <div className="">
@@ -61,10 +67,23 @@ const AppSidebar = () => {
                       asChild
                       className="font-semibold text-md gap-x-4"
                     >
-                      <a href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </a>
+                      <Button
+                        asChild
+                        variant={pathname === item.url ? "default" : "ghost"}
+                        className={
+                          pathname === item.url
+                            ? "justify-start hover:bg-primary hover:text-primary-foreground"
+                            : "justify-start"
+                        }
+                      >
+                        <a
+                          href={item.url}
+                          className="flex flex-row gap-x-2 items-center"
+                        >
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </a>
+                      </Button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
