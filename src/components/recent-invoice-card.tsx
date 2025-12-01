@@ -1,5 +1,4 @@
 import { InvoicePreviewDialog } from "./invoice-preview-dialog";
-import { Badge } from "./ui/badge";
 import {
   Card,
   CardContent,
@@ -14,7 +13,6 @@ type RecentInvoiceCardProps = {
   time: string;
   createdDate: string;
   amount: string;
-  status: string;
 };
 
 const RecentInvoiceCard = ({
@@ -23,7 +21,6 @@ const RecentInvoiceCard = ({
   time,
   createdDate,
   amount,
-  status,
 }: RecentInvoiceCardProps) => {
   return (
     <InvoicePreviewDialog
@@ -43,7 +40,6 @@ const RecentInvoiceCard = ({
         </CardHeader>
         <CardContent className="flex flex-col items-end gap-y-1">
           <span className="font-semibold">${amount}</span>
-          <Badge>{status}</Badge>
         </CardContent>
       </Card>
     </InvoicePreviewDialog>

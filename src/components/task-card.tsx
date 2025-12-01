@@ -1,4 +1,5 @@
-import { LucideDollarSign, LucidePen, LucideTrash } from "lucide-react";
+import { LucideDollarSign, LucideTrash } from "lucide-react";
+import { TaskDialog } from "./task-dialog";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import {
@@ -40,9 +41,7 @@ const TaskCard = ({
         </div>
         <div className="text-gray-500 text-sm">Created: {created}</div>
         <div className="flex flex-row gap-x-2">
-          <Button variant="outline" size="sm">
-            <LucidePen />
-          </Button>
+          <TaskDialog mode="EDIT" />
           <Button variant="outline" size="sm">
             <LucideTrash />
           </Button>

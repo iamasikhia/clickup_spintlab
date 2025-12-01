@@ -1,4 +1,4 @@
-import { LucidePlus } from "lucide-react";
+import { LucidePen, LucidePlus } from "lucide-react";
 import Form from "next/form";
 import { Button } from "./ui/button";
 import {
@@ -13,19 +13,31 @@ import {
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
-const TaskCreateDialog = () => {
+type TaskDialogProps = {
+  mode: "CREATE" | "EDIT";
+};
+
+const TaskDialog = ({ mode }: TaskDialogProps) => {
   return (
     <Dialog>
       <Form action="">
         <DialogTrigger asChild>
-          <Button variant="default" className="mr-8">
-            <LucidePlus />
-            Add Task
-          </Button>
+          {mode === "CREATE" ? (
+            <Button variant="default" className="mr-8">
+              <LucidePlus />
+              Add Task
+            </Button>
+          ) : (
+            <Button variant="outline" size="sm">
+              <LucidePen />
+            </Button>
+          )}
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New Task</DialogTitle>
+            <DialogTitle>
+              {mode === "CREATE" ? "Create New Task" : "Edit Task"}
+            </DialogTitle>
           </DialogHeader>
 
           {/* DIALOG FORM INPUTS */}
@@ -58,7 +70,9 @@ const TaskCreateDialog = () => {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit">Create Task</Button>
+            <Button type="submit">
+              {mode === "CREATE" ? "Create Task" : "Edit"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Form>
@@ -66,4 +80,4 @@ const TaskCreateDialog = () => {
   );
 };
 
-export { TaskCreateDialog };
+export { TaskDialog };
