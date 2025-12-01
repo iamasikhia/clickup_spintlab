@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
         source: "/api/clickup/tasks",
         destination: "http://localhost:8000/clickup/tasks",
       },
+      {
+        source: "/api/smart-billing",
+        destination: "http://localhost:8000/smart-billing",
+      },
     ];
   },
 };

@@ -1,3 +1,5 @@
+"use client";
+
 import { LucideEye, LucidePlus, LucideWand } from "lucide-react";
 import Form from "next/form";
 import { InvoicePreviewDialog } from "./invoice-preview-dialog";
@@ -21,8 +23,74 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
+import { getClickUpTasks, type ClickUpTask, getSmartBilling } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
-const InvoiceCreateDialog = () => {
+export default function InvoiceCreateDialog() {
+  const [tasks, setTasks] = useState<ClickUpTask[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>();
+  const [description, setDescription] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [genError, setGenError] = useState<string | null>(null);
+    
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await getClickUpTasks();
+        setTasks(result);
+      } catch (err) {
+        console.error(err);
+        if (err instanceof Error && err.message === "No access token found") {
+          setError("Please log in before viewing your ClickUp tasks.");
+        } else {
+          setError("Could not fetch ClickUp tasks.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchTasks();
+  }, []);
+
+  const selectedTask = selectedTaskId
+    ? tasks.find((task) => task.id === selectedTaskId)
+    : undefined;
+  
+  const handleGeneration = async () => {
+    try {
+      /* try to generate the description */
+      setIsGenerating(true);
+      setGenError(null);
+      
+      if (!selectedTask) {
+        setGenError("Please select a task first.");
+        return;
+      }
+
+      const time = 3;
+      const rate = 75;
+      const logs = 1;
+
+      const generated = await getSmartBilling({title: selectedTask.name, time, rate, logs});
+      setDescription(generated);
+
+    } catch (err) {
+      /* handle errors */
+      console.error(err);
+      setGenError("Failed to generate description.");
+    } finally {
+      /* what is run regardless */
+    setIsGenerating(false);
+    }
+  };
+
   return (
     <Dialog>
       <Form action="">
@@ -41,15 +109,19 @@ const InvoiceCreateDialog = () => {
 
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="task">Select Task to Invoice</Label>
-            <Select>
+            <Select value = {selectedTaskId} onValueChange = {(value) => setSelectedTaskId(value)} disabled = {loading || !!error}>
               <SelectTrigger id="task" name="task" className="w-full">
-                <SelectValue placeholder="Select a task" />
+                <SelectValue placeholder= {loading ? "Loading tasks..." : "Select a task"}/>
               </SelectTrigger>
               <SelectContent>
-                {/* TODO: USER'S TASKS FROM DB SHOULD BE PUT INTO THIS SELECT */}
-                <SelectItem value="task1">Task 1</SelectItem>
-                <SelectItem value="task2">Task 2</SelectItem>
-                <SelectItem value="task3">Task 3</SelectItem>
+                {!loading && !error && tasks.length === 0 && (
+                  <SelectItem value = "none" disabled>No tasks found</SelectItem>
+                )}
+                {!loading && !error && tasks.map((task) => (
+                  <SelectItem key={task.id} value={task.id}>
+                    {task.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -77,17 +149,28 @@ const InvoiceCreateDialog = () => {
           <div className="flex flex-col gap-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="description">Description</Label>
-              {/* TODO: AI GENERATION OF TASK DESCRIPTION */}
-              <Button variant="outline" size="sm">
+              <Button type = "button"
+              onClick = {handleGeneration}
+              variant = "outline"
+              size="sm"
+              disabled = {isGenerating}>
                 <LucideWand />
-                <span className="line-through">AI Generate</span>
+                {isGenerating ? "Generating..." : "AI Generate"}
               </Button>
             </div>
             <Textarea
               id="description"
               name="description"
-              placeholder="Description of services provided"
+              placeholder="Enter invoice description"
+              value = {description}
+              onChange = {(e) => setDescription(e.target.value)}
             />
+
+            {genError && (
+              <p className = "text-sm text-red-500 mt-2">
+                {genError}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col gap-y-2">
@@ -112,8 +195,8 @@ const InvoiceCreateDialog = () => {
                   </div>
                 </Button>
               </InvoicePreviewDialog>
-              <Button>Create Invoice</Button>
-              <DialogClose>
+              <Button type = "submit">Create Invoice</Button>
+              <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
             </div>
@@ -123,5 +206,3 @@ const InvoiceCreateDialog = () => {
     </Dialog>
   );
 };
-
-export { InvoiceCreateDialog };
