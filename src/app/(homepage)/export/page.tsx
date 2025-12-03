@@ -20,7 +20,7 @@ const Export = () => {
   );
 
   return (
-    <div className="flex flex-col gap-y-8">
+    <div className="flex flex-col gap-y-8 mb-4">
       <Heading
         title="Export & Share"
         description="Download invoices as PDF or send them directly via email"
