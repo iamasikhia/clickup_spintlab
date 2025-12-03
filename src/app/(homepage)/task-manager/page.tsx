@@ -7,32 +7,7 @@ import { TaskDialog } from "@/components/task-dialog";
 import { type ClickUpTask, getClickUpTasks } from "@/lib/utils";
 
 export default function TaskManager() {
-  const [tasks, setTasks] = useState<ClickUpTask[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await getClickUpTasks();
-        setTasks(result);
-      } catch (err) {
-        console.error(err);
-        if (err instanceof Error && err.message === "No access token found") {
-          setError("Please log in before viewing your ClickUp tasks.");
-        } else {
-          setError("Could not fetch ClickUp tasks.");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTasks();
-  }, []);
+  // TODO: Fetch User tasks
 
   return (
     <div className="flex flex-col gap-y-8">
