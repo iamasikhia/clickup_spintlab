@@ -88,7 +88,9 @@ const TaskDialog = ({ mode }: TaskDialogProps) => {
             >
               <SelectTrigger id="task" name="task" className="w-full">
                 <SelectValue
-                  placeholder={loading ? "Loading tasks..." : "Select a task"}
+                  placeholder={
+                    loading ? "Loading tasks..." : "Select a ClickUp task"
+                  }
                 />
               </SelectTrigger>
               <SelectContent>
