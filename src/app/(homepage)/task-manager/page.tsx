@@ -7,7 +7,11 @@ import { TaskDialog } from "@/components/task-dialog";
 import { type ClickUpTask, getClickUpTasks } from "@/lib/utils";
 
 export default function TaskManager() {
-  // TODO: Fetch User tasks
+  useEffect(() => {
+    const getUserTasks = async () => {
+      // TODO: Fetch User's created tasks
+    };
+  });
 
   return (
     <div className="flex flex-col gap-y-8">
@@ -20,7 +24,7 @@ export default function TaskManager() {
       </div>
 
       <div className="mx-8 grid grid-cols-3 gap-x-8 gap-y-8">
-        {/* TODO: Display created tasks here */}
+        {/* TODO: Display user created tasks (from clickup tasks) here */}
       </div>
     </div>
   );
