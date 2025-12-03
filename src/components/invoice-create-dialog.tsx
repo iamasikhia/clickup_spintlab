@@ -2,6 +2,12 @@
 
 import { LucideEye, LucidePlus, LucideWand } from "lucide-react";
 import Form from "next/form";
+import { useEffect, useState } from "react";
+import {
+  type ClickUpTask,
+  getClickUpTasks,
+  getSmartBilling,
+} from "@/lib/utils";
 import { InvoicePreviewDialog } from "./invoice-preview-dialog";
 import { Button } from "./ui/button";
 import {
@@ -23,8 +29,6 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { getClickUpTasks, type ClickUpTask, getSmartBilling } from "@/lib/utils";
-import { useEffect, useState } from "react";
 
 export default function InvoiceCreateDialog() {
   const [tasks, setTasks] = useState<ClickUpTask[]>([]);
@@ -35,7 +39,7 @@ export default function InvoiceCreateDialog() {
   const [description, setDescription] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [genError, setGenError] = useState<string | null>(null);
-    
+
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -55,20 +59,20 @@ export default function InvoiceCreateDialog() {
         setLoading(false);
       }
     };
-  
+
     fetchTasks();
   }, []);
 
   const selectedTask = selectedTaskId
     ? tasks.find((task) => task.id === selectedTaskId)
     : undefined;
-  
+
   const handleGeneration = async () => {
     try {
       /* try to generate the description */
       setIsGenerating(true);
       setGenError(null);
-      
+
       if (!selectedTask) {
         setGenError("Please select a task first.");
         return;
@@ -78,16 +82,20 @@ export default function InvoiceCreateDialog() {
       const rate = 75;
       const logs = 1;
 
-      const generated = await getSmartBilling({title: selectedTask.name, time, rate, logs});
+      const generated = await getSmartBilling({
+        title: selectedTask.name,
+        time,
+        rate,
+        logs,
+      });
       setDescription(generated);
-
     } catch (err) {
       /* handle errors */
       console.error(err);
       setGenError("Failed to generate description.");
     } finally {
       /* what is run regardless */
-    setIsGenerating(false);
+      setIsGenerating(false);
     }
   };
 
@@ -109,19 +117,29 @@ export default function InvoiceCreateDialog() {
 
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="task">Select Task to Invoice</Label>
-            <Select value = {selectedTaskId} onValueChange = {(value) => setSelectedTaskId(value)} disabled = {loading || !!error}>
+            <Select
+              value={selectedTaskId}
+              onValueChange={(value) => setSelectedTaskId(value)}
+              disabled={loading || !!error}
+            >
               <SelectTrigger id="task" name="task" className="w-full">
-                <SelectValue placeholder= {loading ? "Loading tasks..." : "Select a task"}/>
+                <SelectValue
+                  placeholder={loading ? "Loading tasks..." : "Select a task"}
+                />
               </SelectTrigger>
               <SelectContent>
                 {!loading && !error && tasks.length === 0 && (
-                  <SelectItem value = "none" disabled>No tasks found</SelectItem>
-                )}
-                {!loading && !error && tasks.map((task) => (
-                  <SelectItem key={task.id} value={task.id}>
-                    {task.name}
+                  <SelectItem value="none" disabled>
+                    No tasks found
                   </SelectItem>
-                ))}
+                )}
+                {!loading &&
+                  !error &&
+                  tasks.map((task) => (
+                    <SelectItem key={task.id} value={task.id}>
+                      {task.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
@@ -149,11 +167,13 @@ export default function InvoiceCreateDialog() {
           <div className="flex flex-col gap-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="description">Description</Label>
-              <Button type = "button"
-              onClick = {handleGeneration}
-              variant = "outline"
-              size="sm"
-              disabled = {isGenerating}>
+              <Button
+                type="button"
+                onClick={handleGeneration}
+                variant="outline"
+                size="sm"
+                disabled={isGenerating}
+              >
                 <LucideWand />
                 {isGenerating ? "Generating..." : "AI Generate"}
               </Button>
@@ -162,14 +182,12 @@ export default function InvoiceCreateDialog() {
               id="description"
               name="description"
               placeholder="Enter invoice description"
-              value = {description}
-              onChange = {(e) => setDescription(e.target.value)}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
 
             {genError && (
-              <p className = "text-sm text-red-500 mt-2">
-                {genError}
-              </p>
+              <p className="text-sm text-red-500 mt-2">{genError}</p>
             )}
           </div>
 
@@ -195,7 +213,7 @@ export default function InvoiceCreateDialog() {
                   </div>
                 </Button>
               </InvoicePreviewDialog>
-              <Button type = "submit">Create Invoice</Button>
+              <Button type="submit">Create Invoice</Button>
               <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
@@ -205,4 +223,4 @@ export default function InvoiceCreateDialog() {
       </Form>
     </Dialog>
   );
-};
+}

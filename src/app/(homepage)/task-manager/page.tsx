@@ -44,21 +44,8 @@ export default function TaskManager() {
         <TaskDialog mode="CREATE" />
       </div>
 
-      {loading && <p className="mx-8">Loading tasks from ClickUp...</p>}
-
-      {error && <p className="mx-8 text-sm text-red-500">{error}</p>}
-
       <div className="mx-8 grid grid-cols-3 gap-x-8 gap-y-8">
-        {tasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            title={task.name}
-            description="Description of the card"
-            status={task.status?.status ?? "active"}
-            rate="75.00"
-            created={new Date(Number(task.date_created)).toLocaleDateString()}
-          />
-        ))}
+        {/* TODO: Display created tasks here */}
       </div>
     </div>
   );

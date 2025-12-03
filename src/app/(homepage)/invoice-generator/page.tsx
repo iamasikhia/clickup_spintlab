@@ -1,7 +1,7 @@
 import { Heading } from "@/components/heading";
+import InvoiceCreateDialog from "@/components/invoice-create-dialog";
 import { RecentInvoiceCard } from "@/components/recent-invoice-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import InvoiceCreateDialog from "@/components/invoice-create-dialog";
 
 const InvoiceGenerator = () => {
   return (
