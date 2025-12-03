@@ -49,7 +49,7 @@ const TimeTracker = () => {
 
         const result = await getClickUpTasks();
         setTasks(result);
-      } catch (error) {
+      } catch {
         setError("Failed to fetch tasks");
         setLoading(false);
       } finally {
@@ -59,10 +59,6 @@ const TimeTracker = () => {
 
     fetchTasks();
   }, []);
-
-  const selectedTask = selectedTaskId
-    ? tasks.find((task) => task.id === selectedTaskId)
-    : undefined;
 
   const handleStop = () => {
     setIsTracking(false);
