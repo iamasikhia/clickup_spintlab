@@ -11,14 +11,21 @@ import { Heading } from "@/components/heading";
 import { TimeTrackerDialog } from "@/components/time-tracker-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { formatSeconds } from "@/lib/utils";
+import { getClickUpTasks, type ClickUpTask } from "@/lib/utils";
 
 const TimeTracker = () => {
   const [isTracking, setIsTracking] = useState(false);
   const [time, setTime] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [tasks, setTasks] = useState<ClickUpTask[]>([]);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>();
+  const hasTaskSelected = !!selectedTaskId;
 
   useEffect(() => {
+    if (!hasTaskSelected) return;
     if (!isTracking) return;
 
     const interval = setInterval(() => {
@@ -26,14 +33,40 @@ const TimeTracker = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isTracking]);
+  }, [isTracking, hasTaskSelected, selectedTaskId]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await getClickUpTasks();
+        setTasks(result);
+      } catch (error) {
+        setError("Failed to fetch tasks");
+        setLoading(false);
+      } finally {
+        setLoading(false);
+      } 
+    };
+
+    fetchTasks();
+  }, []);
+  
+  const selectedTask = selectedTaskId
+  ? tasks.find((task) => task.id === selectedTaskId)
+  : undefined;
 
   const handleStop = () => {
     setIsTracking(false);
     setTime(0);
+    setSelectedTaskId(undefined);
 
     // TODO: SAVE TASK TIME AND ADD TO RECENT TIME LOGS
   };
+
+
 
   return (
     <div className="flex flex-1 flex-col gap-y-8">
@@ -53,11 +86,22 @@ const TimeTracker = () => {
         </CardHeader>
         <CardContent className="flex flex-col gap-y-4">
           <span className="text-sm font-semibold">Select task</span>
-
-          <Select>
-            <SelectTrigger className="w-[360px]">
-              <SelectValue placeholder="Choose a task to track time for" />
+          <Select value={selectedTaskId}
+          onValueChange={(value) => setSelectedTaskId(value)}
+          disabled={loading || !!error}>
+            <SelectTrigger id = "task" name = "task" className="w-[360px]">
+              <SelectValue placeholder= {loading ? "Loading tasks..." : "Choose a task to track time for"} />
             </SelectTrigger>
+            <SelectContent>
+              {!loading && !error && tasks.length === 0 && (
+                <SelectItem value = "none" disabled>No tasks found</SelectItem>
+              )}
+              {!loading && !error && tasks.map((task) => (
+                <SelectItem key={task.id} value={task.id}>
+                  {task.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
 
           <div className="font-mono text-6xl self-center">
@@ -65,7 +109,12 @@ const TimeTracker = () => {
           </div>
 
           <div className="self-center flex gap-x-4">
-            <Button onClick={() => setIsTracking(!isTracking)}>
+            <Button 
+              onClick={() => {
+                if (!hasTaskSelected) return;
+                setIsTracking((prev) => !prev);
+              }}
+              disabled={!hasTaskSelected}>
               {isTracking ? (
                 <>
                   <LucidePause />
