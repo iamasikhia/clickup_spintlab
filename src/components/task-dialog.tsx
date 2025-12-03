@@ -80,7 +80,7 @@ const TaskDialog = ({ mode }: TaskDialogProps) => {
           {/* DIALOG FORM INPUTS */}
 
           <div className="flex flex-col gap-y-2">
-            <Label htmlFor="task">Select Task to Invoice</Label>
+            <Label htmlFor="task">Select a ClickUp Task</Label>
             <Select
               value={selectedTaskId}
               onValueChange={(value) => setSelectedTaskId(value)}

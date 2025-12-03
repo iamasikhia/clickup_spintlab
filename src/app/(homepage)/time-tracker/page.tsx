@@ -5,15 +5,21 @@ import {
   LucidePause,
   LucidePlay,
   LucideSquare,
+  LucideXCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Heading } from "@/components/heading";
 import { TimeTrackerDialog } from "@/components/time-tracker-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { formatSeconds } from "@/lib/utils";
-import { getClickUpTasks, type ClickUpTask } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { type ClickUpTask, formatSeconds, getClickUpTasks } from "@/lib/utils";
 
 const TimeTracker = () => {
   const [isTracking, setIsTracking] = useState(false);
@@ -33,7 +39,7 @@ const TimeTracker = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isTracking, hasTaskSelected, selectedTaskId]);
+  }, [isTracking, hasTaskSelected]);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -48,15 +54,15 @@ const TimeTracker = () => {
         setLoading(false);
       } finally {
         setLoading(false);
-      } 
+      }
     };
 
     fetchTasks();
   }, []);
-  
+
   const selectedTask = selectedTaskId
-  ? tasks.find((task) => task.id === selectedTaskId)
-  : undefined;
+    ? tasks.find((task) => task.id === selectedTaskId)
+    : undefined;
 
   const handleStop = () => {
     setIsTracking(false);
@@ -66,7 +72,12 @@ const TimeTracker = () => {
     // TODO: SAVE TASK TIME AND ADD TO RECENT TIME LOGS
   };
 
-
+  const handleCancel = () => {
+    // Cancel current tracking without saving and keep selected task
+    setIsTracking(false);
+    setTime(0);
+    setSelectedTaskId(undefined);
+  };
 
   return (
     <div className="flex flex-1 flex-col gap-y-8">
@@ -86,21 +97,34 @@ const TimeTracker = () => {
         </CardHeader>
         <CardContent className="flex flex-col gap-y-4">
           <span className="text-sm font-semibold">Select task</span>
-          <Select value={selectedTaskId}
-          onValueChange={(value) => setSelectedTaskId(value)}
-          disabled={loading || !!error}>
-            <SelectTrigger id = "task" name = "task" className="w-[360px]">
-              <SelectValue placeholder= {loading ? "Loading tasks..." : "Choose a task to track time for"} />
+          <Select
+            key={selectedTaskId ?? "__empty__"}
+            value={selectedTaskId}
+            onValueChange={(value) => setSelectedTaskId(value)}
+            disabled={loading || !!error || isTracking}
+          >
+            <SelectTrigger id="task" name="task" className="w-[360px]">
+              <SelectValue
+                placeholder={
+                  loading
+                    ? "Loading tasks..."
+                    : "Choose a task to track time for"
+                }
+              />
             </SelectTrigger>
             <SelectContent>
               {!loading && !error && tasks.length === 0 && (
-                <SelectItem value = "none" disabled>No tasks found</SelectItem>
-              )}
-              {!loading && !error && tasks.map((task) => (
-                <SelectItem key={task.id} value={task.id}>
-                  {task.name}
+                <SelectItem value="none" disabled>
+                  No tasks found
                 </SelectItem>
-              ))}
+              )}
+              {!loading &&
+                !error &&
+                tasks.map((task) => (
+                  <SelectItem key={task.id} value={task.id}>
+                    {task.name}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
 
@@ -109,12 +133,13 @@ const TimeTracker = () => {
           </div>
 
           <div className="self-center flex gap-x-4">
-            <Button 
+            <Button
               onClick={() => {
                 if (!hasTaskSelected) return;
                 setIsTracking((prev) => !prev);
               }}
-              disabled={!hasTaskSelected}>
+              disabled={!hasTaskSelected}
+            >
               {isTracking ? (
                 <>
                   <LucidePause />
@@ -127,9 +152,21 @@ const TimeTracker = () => {
                 </>
               )}
             </Button>
-            <Button variant="destructive" onClick={handleStop}>
+            <Button
+              variant="destructive"
+              onClick={handleStop}
+              disabled={!hasTaskSelected || !isTracking}
+            >
               <LucideSquare />
               Stop and Save
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleCancel}
+              disabled={!hasTaskSelected || !isTracking}
+            >
+              <LucideXCircle />
+              Cancel
             </Button>
           </div>
         </CardContent>

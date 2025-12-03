@@ -1,6 +1,6 @@
 import { Heading } from "@/components/heading";
+import { InvoiceCard } from "@/components/invoice-card";
 import InvoiceCreateDialog from "@/components/invoice-create-dialog";
-import { RecentInvoiceCard } from "@/components/recent-invoice-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const InvoiceGenerator = () => {
@@ -15,10 +15,10 @@ const InvoiceGenerator = () => {
       </div>
       <Card className="mx-8">
         <CardHeader>
-          <CardTitle>Recent Invoices</CardTitle>
+          <CardTitle>Created Invoices</CardTitle>
         </CardHeader>
         <CardContent>
-          <RecentInvoiceCard
+          <InvoiceCard
             invoiceName="#inv_001"
             companyName="Acme Corporation"
             time="10.5"

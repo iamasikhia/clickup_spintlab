@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "./ui/card";
 
-type RecentInvoiceCardProps = {
+type InvoiceCardProps = {
   invoiceName: string;
   companyName: string;
   time: string;
@@ -15,13 +15,13 @@ type RecentInvoiceCardProps = {
   amount: string;
 };
 
-const RecentInvoiceCard = ({
+const InvoiceCard = ({
   invoiceName,
   companyName,
   time,
   createdDate,
   amount,
-}: RecentInvoiceCardProps) => {
+}: InvoiceCardProps) => {
   return (
     <InvoicePreviewDialog
       invoiceName={invoiceName}
@@ -46,4 +46,4 @@ const RecentInvoiceCard = ({
   );
 };
 
-export { RecentInvoiceCard };
+export { InvoiceCard };
