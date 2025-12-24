@@ -21,4 +21,8 @@ function Label({
   )
 }
 
+<<<<<<< HEAD
 export { Label }
+=======
+export { Label }
+>>>>>>> ad8e8b1e72c955b91891a6aac30e07721a3bee79
