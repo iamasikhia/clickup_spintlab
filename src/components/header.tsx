@@ -1,4 +1,6 @@
 import { LucideLogOut } from "lucide-react";
+import Link from "next/link";
+import { ThemeSwitcher } from "./theme/theme-switcher";
 import { Button } from "./ui/button";
 
 type HeaderProps = {
@@ -11,11 +13,14 @@ const Header = ({ page, username }: HeaderProps) => {
     <nav className="w-full p-4 flex justify-between items-center">
       <div className="text-lg font-semibold">{page}</div>
       <div className="flex gap-x-4 items-center">
-        <div className="text-sm text-gray-600">Welcome, {username}</div>
-        <Button variant="destructive">
-          <LucideLogOut />
-          <span className="font-semibold">Sign Out</span>
+        <div className="text-sm">Welcome, {username}</div>
+        <Button variant="destructive" asChild>
+          <Link href="/">
+            <LucideLogOut />
+            <span className="font-semibold">Sign Out</span>
+          </Link>
         </Button>
+        <ThemeSwitcher />
       </div>
     </nav>
   );

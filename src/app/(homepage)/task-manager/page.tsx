@@ -1,9 +1,18 @@
-import { LucidePlus } from "lucide-react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { Heading } from "@/components/heading";
 import { TaskCard } from "@/components/task-card";
-import { Button } from "@/components/ui/button";
+import { TaskDialog } from "@/components/task-dialog";
+import { type ClickUpTask, getClickUpTasks } from "@/lib/utils";
 
-const TaskManager = () => {
+export default function TaskManager() {
+  useEffect(() => {
+    const getUserTasks = async () => {
+      // TODO: Fetch User's created tasks
+    };
+  });
+
   return (
     <div className="flex flex-col gap-y-8">
       <div className="flex flex-1 justify-between items-center">
@@ -11,36 +20,12 @@ const TaskManager = () => {
           title="Task Manager"
           description="Create and manage your projects and hourly rates"
         />
-        <Button className="mr-8">
-          <LucidePlus />
-          Add Task
-        </Button>
+        <TaskDialog mode="CREATE" />
       </div>
+
       <div className="mx-8 grid grid-cols-3 gap-x-8 gap-y-8">
-        <TaskCard
-          title="Task Card"
-          description="Description of the card"
-          status="active"
-          rate="75.00"
-          created="1/4/2014"
-        />
-        <TaskCard
-          title="Task Card"
-          description="Description of the card"
-          status="active"
-          rate="75.00"
-          created="1/4/2014"
-        />
-        <TaskCard
-          title="Task Card"
-          description="Description of the card"
-          status="active"
-          rate="75.00"
-          created="1/4/2014"
-        />
+        {/* TODO: Display user created tasks (from clickup tasks) here */}
       </div>
     </div>
   );
-};
-
-export default TaskManager;
+}

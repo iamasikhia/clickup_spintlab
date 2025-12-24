@@ -1,12 +1,14 @@
+"use client";
+
 import {
   LucideChartColumn,
-  LucideCheckCircle,
   LucideClock,
   LucideReceiptText,
   LucideSend,
   LucideSettings,
 } from "lucide-react";
-import { SidebarProfile } from "./sidebar-profile";
+import { usePathname } from "next/navigation";
+import { Button } from "./ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -41,48 +43,55 @@ const AppSidebar = () => {
       icon: LucideReceiptText,
     },
     {
-      title: "Invoice Approval",
-      url: "/invoice-approval",
-      icon: LucideCheckCircle,
-    },
-    {
       title: "Export and Share",
       url: "/export",
       icon: LucideSend,
     },
   ];
 
+  const pathname = usePathname();
+
   return (
     <Sidebar className="p-4">
-      <SidebarHeader className="font-semibold mb-4">
-        Smart Invoice
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarProfile />
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu className="gap-y-2">
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    className="font-semibold text-md gap-x-4"
-                  >
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+      <div className="">
+        <SidebarHeader className="font-semibold mb-4">
+          Smart Invoice
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu className="gap-y-2">
+                {items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className="font-semibold text-md gap-x-4"
+                    >
+                      <Button
+                        asChild
+                        variant={pathname === item.url ? "default" : "ghost"}
+                        className={
+                          pathname === item.url
+                            ? "justify-start hover:bg-primary hover:text-primary-foreground"
+                            : "justify-start"
+                        }
+                      >
+                        <a
+                          href={item.url}
+                          className="flex flex-row gap-x-2 items-center"
+                        >
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </a>
+                      </Button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </div>
     </Sidebar>
   );
 };
